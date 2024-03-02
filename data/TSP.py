@@ -69,7 +69,7 @@ class TSP(Dataset):
             for idx in range(num_nodes):
                 for n_idx in knns[idx]:
                     if n_idx != idx:  # No self-connection
-                        g.add_edge(idx, n_idx)
+                        g.add_edges(idx, n_idx)
                         edge_feats.append(W_val[idx][n_idx])
                         edge_labels.append(int(edges_target[idx][n_idx]))
             # dgl.transform.remove_self_loop(g)

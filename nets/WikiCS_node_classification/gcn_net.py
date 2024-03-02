@@ -17,7 +17,6 @@ class GCNNet(nn.Module):
 
     def __init__(self, net_params):
         super().__init__()
-
         in_dim_node = net_params['in_dim'] # node_dim (feat is an integer)
         hidden_dim = net_params['hidden_dim']
         out_dim = net_params['out_dim']
@@ -61,14 +60,3 @@ class GCNNet(nn.Module):
         loss = criterion(pred, label)
 
         return loss
-
-
-
-
-
-
-
-
-
-
-
