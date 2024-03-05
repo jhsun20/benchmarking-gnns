@@ -31,52 +31,30 @@ class GCNLayer(nn.Module):
     """
         Param: [in_dim, out_dim]
     """
-    def __init__(self, in_dim, out_dim, activation, dropout, batch_norm, residual=False, dgl_builtin=True):
+    def __init__(self, in_dim, out_dim, batch_norm, in_feat_dropout, residual=False, activ=F.elu):
         super().__init__()
-        self.in_channels = in_dim
-        self.out_channels = out_dim
         self.batch_norm = batch_norm
         self.residual = residual
-        self.dgl_builtin = dgl_builtin
-        
         if in_dim != out_dim:
             self.residual = False
-        
         self.batchnorm_h = nn.BatchNorm1d(out_dim)
-        self.activation = activation
-        self.dropout = nn.Dropout(dropout)
-        if self.dgl_builtin == False:
-            self.apply_mod = NodeApplyModule(in_dim, out_dim)
-        elif dgl.__version__ < "0.5":
-            self.conv = GraphConv(in_dim, out_dim)
-        else:
-            self.conv = GraphConv(in_dim, out_dim, allow_zero_in_degree=True)
+        self.activation = activ
+        self.dropout = nn.Dropout(in_feat_dropout)
+        self.conv = GraphConv(in_dim, out_dim, allow_zero_in_degree=True)
 
-        
     def forward(self, g, feature):
-        h_in = feature   # to be used for residual connection
+        h = self.dropout(h)
+        h_in = h   # to be used for residual connection
+        h = self.conv(g, h)
 
-        if self.dgl_builtin == False:
-            g.ndata['h'] = feature
-            g.update_all(msg, reduce)
-            g.apply_nodes(func=self.apply_mod)
-            h = g.ndata['h'] # result of graph convolution
-        else:
-            h = self.conv(g, feature)
-        
         if self.batch_norm:
-            h = self.batchnorm_h(h) # batch normalization  
-       
+            h = self.batchnorm_h(h) # batch normalization
+
         if self.activation:
             h = self.activation(h)
-        
+
         if self.residual:
             h = h_in + h # residual connection
-            
-        h = self.dropout(h)
+
+
         return h
-    
-    def __repr__(self):
-        return '{}(in_channels={}, out_channels={}, residual={})'.format(self.__class__.__name__,
-                                             self.in_channels,
-                                             self.out_channels, self.residual)

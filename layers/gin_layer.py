@@ -67,7 +67,6 @@ class GINLayer(nn.Module):
 
     def forward(self, g, h):
         h_in = h # for residual connection
-        
         g = g.local_var()
         g.ndata['h'] = h
         g.update_all(fn.copy_u('h', 'm'), self._reducer('m', 'neigh'))
@@ -139,5 +138,6 @@ class MLP(nn.Module):
             # If MLP
             h = x
             for i in range(self.num_layers - 1):
-                h = F.relu(self.batch_norms[i](self.linears[i](h)))
+                h = h.flatten(1)
+                h = F.relu((self.linears[i](h)))
             return self.linears[-1](h)

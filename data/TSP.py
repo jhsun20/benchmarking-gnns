@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 
 
 class TSP(Dataset):
-    def __init__(self, data_dir, split="train", num_neighbors=25, max_samples=10000):    
+    def __init__(self, data_dir, split="train", num_neighbors=25, max_samples=10000):
         self.data_dir = data_dir
         self.split = split
         self.filename = f'{data_dir}/tsp50-500_{split}.txt'
