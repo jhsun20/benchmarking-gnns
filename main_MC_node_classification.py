@@ -298,150 +298,25 @@ def main():
     """
         USER CONTROLS
     """
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--config', help="Please give a config.json file with training/model/data/param details")
-    parser.add_argument('--gpu_id', help="Please give a value for gpu id")
-    parser.add_argument('--model', help="Please give a value for model name")
-    parser.add_argument('--train_dataset', help="Please give a value for train dataset name")
-    parser.add_argument('--val_dataset', help="Please give a value for val dataset name")
-    parser.add_argument('--test_dataset', help="Please give a value for test dataset name")
-    parser.add_argument('--out_dir', help="Please give a value for out_dir")
-    parser.add_argument('--seed', help="Please give a value for seed")
-    parser.add_argument('--epochs', help="Please give a value for epochs")
-    parser.add_argument('--batch_size', help="Please give a value for batch_size")
-    parser.add_argument('--init_lr', help="Please give a value for init_lr")
-    parser.add_argument('--lr_reduce_factor', help="Please give a value for lr_reduce_factor")
-    parser.add_argument('--lr_schedule_patience', help="Please give a value for lr_schedule_patience")
-    parser.add_argument('--min_lr', help="Please give a value for min_lr")
-    parser.add_argument('--weight_decay', help="Please give a value for weight_decay")
-    parser.add_argument('--print_epoch_interval', help="Please give a value for print_epoch_interval")
-    parser.add_argument('--L', help="Please give a value for L")
-    parser.add_argument('--hidden_dim', help="Please give a value for hidden_dim")
-    parser.add_argument('--out_dim', help="Please give a value for out_dim")
-    parser.add_argument('--residual', help="Please give a value for residual")
-    parser.add_argument('--edge_feat', help="Please give a value for edge_feat")
-    parser.add_argument('--readout', help="Please give a value for readout")
-    parser.add_argument('--kernel', help="Please give a value for kernel")
-    parser.add_argument('--n_heads', help="Please give a value for n_heads")
-    parser.add_argument('--gated', help="Please give a value for gated")
-    parser.add_argument('--in_feat_dropout', help="Please give a value for in_feat_dropout")
-    parser.add_argument('--dropout', help="Please give a value for dropout")
-    parser.add_argument('--layer_norm', help="Please give a value for layer_norm")
-    parser.add_argument('--batch_norm', help="Please give a value for batch_norm")
-    parser.add_argument('--sage_aggregator', help="Please give a value for sage_aggregator")
-    parser.add_argument('--data_mode', help="Please give a value for data_mode")
-    parser.add_argument('--num_pool', help="Please give a value for num_pool")
-    parser.add_argument('--gnn_per_block', help="Please give a value for gnn_per_block")
-    parser.add_argument('--embedding_dim', help="Please give a value for embedding_dim")
-    parser.add_argument('--pool_ratio', help="Please give a value for pool_ratio")
-    parser.add_argument('--linkpred', help="Please give a value for linkpred")
-    parser.add_argument('--cat', help="Please give a value for cat")
-    parser.add_argument('--self_loop', help="Please give a value for self_loop")
-    parser.add_argument('--max_time', help="Please give a value for max_time")
-    parser.add_argument('--pos_enc_dim', help="Please give a value for pos_enc_dim")
-    parser.add_argument('--pos_enc', help="Please give a value for pos_enc")
-    args = parser.parse_args()
     with open('configs/MC_node_classification_GAT_100k.json') as f:
         config = json.load(f)
     print(torch.cuda.is_available())
     # device
-    if args.gpu_id is not None:
-        config['gpu']['id'] = int(args.gpu_id)
-        config['gpu']['use'] = True
     device = gpu_setup(config['gpu']['use'], config['gpu']['id'])
     # model, dataset, out_dir
-    if args.model is not None:
-        MODEL_NAME = args.model
-    else:
-        MODEL_NAME = config['model']
-    if args.train_dataset is not None:
-        TRAIN_DATASET_NAME = args.train_dataset
-    else:
-        TRAIN_DATASET_NAME = config['train_dataset']
+    MODEL_NAME = config['model']
+    TRAIN_DATASET_NAME = config['train_dataset']
     train_dataset = LoadData(data_dir='data/CO/train', name=TRAIN_DATASET_NAME, split='train', features="degree")
     val_dataset = LoadData(data_dir='data/CO/val', name=TRAIN_DATASET_NAME, split='val', features="degree")
     print(train_dataset.dataset[0][0].ndata['feat'])
-    if args.out_dir is not None:
-        out_dir = args.out_dir
-    else:
-        out_dir = config['out_dir']
+    out_dir = config['out_dir']
     # parameters
     params = config['params']
-    if args.seed is not None:
-        params['seed'] = int(args.seed)
-    if args.epochs is not None:
-        params['epochs'] = int(args.epochs)
-    if args.batch_size is not None:
-        params['batch_size'] = int(args.batch_size)
-    if args.init_lr is not None:
-        params['init_lr'] = float(args.init_lr)
-    if args.lr_reduce_factor is not None:
-        params['lr_reduce_factor'] = float(args.lr_reduce_factor)
-    if args.lr_schedule_patience is not None:
-        params['lr_schedule_patience'] = int(args.lr_schedule_patience)
-    if args.min_lr is not None:
-        params['min_lr'] = float(args.min_lr)
-    if args.weight_decay is not None:
-        params['weight_decay'] = float(args.weight_decay)
-    if args.print_epoch_interval is not None:
-        params['print_epoch_interval'] = int(args.print_epoch_interval)
-    if args.max_time is not None:
-        params['max_time'] = float(args.max_time)
     # network parameters
     net_params = config['net_params']
     net_params['device'] = device
     net_params['gpu_id'] = config['gpu']['id']
     net_params['batch_size'] = params['batch_size']
-    if args.L is not None:
-        net_params['L'] = int(args.L)
-    if args.hidden_dim is not None:
-        net_params['hidden_dim'] = int(args.hidden_dim)
-    if args.out_dim is not None:
-        net_params['out_dim'] = int(args.out_dim)
-    if args.residual is not None:
-        net_params['residual'] = True if args.residual == 'True' else False
-    if args.edge_feat is not None:
-        net_params['edge_feat'] = True if args.edge_feat == 'True' else False
-    if args.readout is not None:
-        net_params['readout'] = args.readout
-    if args.kernel is not None:
-        net_params['kernel'] = int(args.kernel)
-    if args.n_heads is not None:
-        net_params['n_heads'] = int(args.n_heads)
-    if args.gated is not None:
-        net_params['gated'] = True if args.gated == 'True' else False
-    if args.in_feat_dropout is not None:
-        net_params['in_feat_dropout'] = float(args.in_feat_dropout)
-    if args.dropout is not None:
-        net_params['dropout'] = float(args.dropout)
-    if args.layer_norm is not None:
-        net_params['layer_norm'] = True if args.layer_norm == 'True' else False
-    if args.batch_norm is not None:
-        net_params['batch_norm'] = True if args.batch_norm == 'True' else False
-    if args.sage_aggregator is not None:
-        net_params['sage_aggregator'] = args.sage_aggregator
-    if args.data_mode is not None:
-        net_params['data_mode'] = args.data_mode
-    if args.num_pool is not None:
-        net_params['num_pool'] = int(args.num_pool)
-    if args.gnn_per_block is not None:
-        net_params['gnn_per_block'] = int(args.gnn_per_block)
-    if args.embedding_dim is not None:
-        net_params['embedding_dim'] = int(args.embedding_dim)
-    if args.pool_ratio is not None:
-        net_params['pool_ratio'] = float(args.pool_ratio)
-    if args.linkpred is not None:
-        net_params['linkpred'] = True if args.linkpred == 'True' else False
-    if args.cat is not None:
-        net_params['cat'] = True if args.cat == 'True' else False
-    if args.self_loop is not None:
-        net_params['self_loop'] = True if args.self_loop == 'True' else False
-    if args.pos_enc is not None:
-        net_params['pos_enc'] = True if args.pos_enc == 'True' else False
-    if args.pos_enc_dim is not None:
-        net_params['pos_enc_dim'] = int(args.pos_enc_dim)
-
     # CO
     net_params['in_dim'] = 2
     print('in dim:', net_params['in_dim'])
@@ -473,7 +348,7 @@ def main():
         TEST_DATASET_NAME = args.test_dataset
     else:
         TEST_DATASET_NAME = config['test_dataset']
-    test_dataset = LoadData(data_dir='data/CO/test', name=TEST_DATASET_NAME, split='test')
+    test_dataset = LoadData(data_dir='data/CO/test', name=TEST_DATASET_NAME, split='test', features="degree")
     write_file_name_test = out_dir + 'results/TEST_result_' + MODEL_NAME + "_" + TEST_DATASET_NAME + "_GPU" + str \
         (config['gpu']['id']) + "_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y')
     dirs_test = write_file_name_test
@@ -498,7 +373,7 @@ def main():
         TEST_DATASET_NAME = args.test_dataset
     else:
         TEST_DATASET_NAME = config['test_dataset']
-    test_dataset = LoadData(data_dir='data/CO/test', name=TEST_DATASET_NAME, split='test')
+    test_dataset = LoadData(data_dir='data/CO/test', name=TEST_DATASET_NAME, split='test', features="degree")
     write_file_name_test = out_dir + 'results/TEST_result_' + MODEL_NAME + "_" + TEST_DATASET_NAME + "_GPU" + str \
         (config['gpu']['id']) + "_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y')
     dirs_test = write_file_name_test
@@ -523,7 +398,7 @@ def main():
         TEST_DATASET_NAME = args.test_dataset
     else:
         TEST_DATASET_NAME = config['test_dataset']
-    test_dataset = LoadData(data_dir='data/CO/test', name=TEST_DATASET_NAME, split='test')
+    test_dataset = LoadData(data_dir='data/CO/test', name=TEST_DATASET_NAME, split='test', features="degree")
     write_file_name_test = out_dir + 'results/TEST_result_' + MODEL_NAME + "_" + TEST_DATASET_NAME + "_GPU" + str \
         (config['gpu']['id']) + "_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y')
     dirs_test = write_file_name_test
