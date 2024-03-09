@@ -7,6 +7,7 @@
     "model": "GIN",
     "train_dataset": "MC",
     "val_dataset": "MC",
+    "test_dataset": "MC",
 
     "out_dir": "out/MC_node_classification/",
 

@@ -7,6 +7,7 @@
     "model": "GAT",
     "train_dataset": "MVC",
     "val_dataset": "MVC",
+    "test_dataset": "MVC",
 
     "out_dir": "out/MVC_node_classification/",
 

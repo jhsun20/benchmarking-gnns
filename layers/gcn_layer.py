@@ -43,7 +43,8 @@ class GCNLayer(nn.Module):
         self.conv = GraphConv(in_dim, out_dim, allow_zero_in_degree=True)
 
     def forward(self, g, feature):
-        h = self.dropout(h)
+
+        h = self.dropout(feature)
         h_in = h   # to be used for residual connection
         h = self.conv(g, h)
 

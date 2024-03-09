@@ -31,7 +31,7 @@ class GATNet(nn.Module):
         n_classes = net_params['n_classes']
         self.n_classes = net_params['n_classes']
         self.device = net_params['device']
-        self.embedding_h = nn.Embedding(in_dim_node, hidden_dim * num_heads) # node feat is an integer
+        self.feature = nn.Linear(in_dim_node, hidden_dim * num_heads) # node feat is an integer
         self.layers = nn.ModuleList([GATv2Layer(hidden_dim * num_heads, hidden_dim, num_heads, batch_norm, in_feat_dropout, attn_drop, neg_slope, residual) for _ in range(n_layers-1)])
         self.layers.append(GATv2Layer(hidden_dim * num_heads, out_dim, 1, batch_norm, in_feat_dropout, attn_drop, neg_slope,
                                     residual))
@@ -40,7 +40,7 @@ class GATNet(nn.Module):
     def forward(self, g, h, e):
 
         # input embedding
-        h = self.embedding_h(h)
+        h = self.feature(h)
 
         # GAT
         for conv in self.layers:
@@ -51,22 +51,24 @@ class GATNet(nn.Module):
 
         return h_out
 
-    def loss(self, pred, label):
-
-        # calculating label weights for weighted loss computation
-        V = label.size(0)
-        label_count = torch.bincount(label)
-        label_count = label_count[label_count.nonzero()].squeeze()
-        cluster_sizes = torch.zeros(self.n_classes).long().to(self.device)
-        cluster_sizes[torch.unique(label)] = label_count
-        weight = (V - cluster_sizes).float() / V
-        weight *= (cluster_sizes>0).float()
-        
-        # weighted cross-entropy for unbalanced classes
-        criterion = nn.CrossEntropyLoss(weight=weight)
-        loss = criterion(pred, label)
-
-        return loss
+    def loss(self, pred, label, loss_fn='weighted_ce'):
+        if loss_fn == 'ce':
+            criterion = nn.CrossEntropyLoss()
+            loss = criterion(pred, label)
+            return loss
+        elif loss_fn == 'weighted_ce':
+            # calculating label weights for weighted loss computation
+            V = label.size(0)
+            label_count = torch.bincount(label)
+            label_count = label_count[label_count.nonzero()].squeeze()
+            cluster_sizes = torch.zeros(self.n_classes).long().to(self.device)
+            cluster_sizes[torch.unique(label)] = label_count
+            weight = (V - cluster_sizes).float() / V
+            weight *= (cluster_sizes>0).float()
+            # weighted cross-entropy for unbalanced classes
+            criterion = nn.CrossEntropyLoss(weight=weight)
+            loss = criterion(pred, label)
+            return loss
 
 
 class GATv1Net(nn.Module):

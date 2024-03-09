@@ -6,14 +6,15 @@
     "model": "GCN",
     "train_dataset": "MC",
     "val_dataset": "MC",
+    "test_dataset": "MC",
 
     "out_dir": "out/MC_node_classification/",
     "params": {
         "seed": 41,
-        "epochs": 5,
+        "epochs": 1000,
         "batch_size": 64,
         "init_lr": 1e-2,
-        "lr_reduce_factor": 0.5,
+        "lr_reduce_factor": 0.1,
         "lr_schedule_patience": 25,
         "min_lr": 1e-5,
         "weight_decay": 5e-4,
