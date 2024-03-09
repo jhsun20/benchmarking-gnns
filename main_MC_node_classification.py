@@ -344,10 +344,7 @@ def main():
 
     train_val_pipeline(MODEL_NAME, train_dataset, val_dataset, params, net_params, dirs)
 
-    if args.test_dataset is not None:
-        TEST_DATASET_NAME = args.test_dataset
-    else:
-        TEST_DATASET_NAME = config['test_dataset']
+    TEST_DATASET_NAME = config['test_dataset']
     test_dataset = LoadData(data_dir='data/CO/test', name=TEST_DATASET_NAME, split='test', features="degree")
     write_file_name_test = out_dir + 'results/TEST_result_' + MODEL_NAME + "_" + TEST_DATASET_NAME + "_GPU" + str \
         (config['gpu']['id']) + "_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y')
@@ -369,10 +366,7 @@ def main():
     dirs = root_log_dir, root_ckpt_dir, write_file_name_train, write_config_file, losses_dir
     train_val_pipeline(MODEL_NAME, train_dataset, val_dataset, params, net_params, dirs)
 
-    if args.test_dataset is not None:
-        TEST_DATASET_NAME = args.test_dataset
-    else:
-        TEST_DATASET_NAME = config['test_dataset']
+    TEST_DATASET_NAME = config['test_dataset']
     test_dataset = LoadData(data_dir='data/CO/test', name=TEST_DATASET_NAME, split='test', features="degree")
     write_file_name_test = out_dir + 'results/TEST_result_' + MODEL_NAME + "_" + TEST_DATASET_NAME + "_GPU" + str \
         (config['gpu']['id']) + "_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y')
@@ -394,10 +388,7 @@ def main():
     dirs = root_log_dir, root_ckpt_dir, write_file_name_train, write_config_file, losses_dir
     train_val_pipeline(MODEL_NAME, train_dataset, val_dataset, params, net_params, dirs)
 
-    if args.test_dataset is not None:
-        TEST_DATASET_NAME = args.test_dataset
-    else:
-        TEST_DATASET_NAME = config['test_dataset']
+    TEST_DATASET_NAME = config['test_dataset']
     test_dataset = LoadData(data_dir='data/CO/test', name=TEST_DATASET_NAME, split='test', features="degree")
     write_file_name_test = out_dir + 'results/TEST_result_' + MODEL_NAME + "_" + TEST_DATASET_NAME + "_GPU" + str \
         (config['gpu']['id']) + "_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y')
