@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import dgl.function as fn
+from dgl.nn.pytorch import GINConv
 
 """
     GIN: Graph Isomorphism Networks
@@ -34,22 +35,15 @@ class GINLayer(nn.Module):
         If True, :math:`\epsilon` will be a learnable parameter.
     
     """
-    def __init__(self, apply_func, aggr_type, dropout, batch_norm, residual=False, init_eps=0, learn_eps=False):
+    def __init__(self, apply_func, aggr_type, dropout, batch_norm, residual=False, init_eps=0, learn_eps=False, activ=F.leaky_relu):
         super().__init__()
         self.apply_func = apply_func
-        
-        if aggr_type == 'sum':
-            self._reducer = fn.sum
-        elif aggr_type == 'max':
-            self._reducer = fn.max
-        elif aggr_type == 'mean':
-            self._reducer = fn.mean
-        else:
-            raise KeyError('Aggregator type {} not recognized.'.format(aggr_type))
-            
         self.batch_norm = batch_norm
         self.residual = residual
-        self.dropout = dropout
+        self.init_eps = init_eps
+        self.learn_eps = learn_eps
+        self.activation = activ
+        self.dropout = nn.Dropout(dropout)
         
         in_dim = apply_func.mlp.input_dim
         out_dim = apply_func.mlp.output_dim
@@ -57,32 +51,24 @@ class GINLayer(nn.Module):
         if in_dim != out_dim:
             self.residual = False
             
-        # to specify whether eps is trainable or not.
-        if learn_eps:
-            self.eps = torch.nn.Parameter(torch.FloatTensor([init_eps]))
-        else:
-            self.register_buffer('eps', torch.FloatTensor([init_eps]))
-            
         self.bn_node_h = nn.BatchNorm1d(out_dim)
+
+        self.ginconv = GINConv(self.apply_func, aggr_type, init_eps, learn_eps, activation=None)
 
     def forward(self, g, h):
         h_in = h # for residual connection
-        g = g.local_var()
-        g.ndata['h'] = h
-        g.update_all(fn.copy_u('h', 'm'), self._reducer('m', 'neigh'))
-        h = (1 + self.eps) * h + g.ndata['neigh']
-        if self.apply_func is not None:
-            h = self.apply_func(h)
+        h = self.ginconv(g, h)
 
         if self.batch_norm:
             h = self.bn_node_h(h) # batch normalization  
-       
-        h = F.relu(h) # non-linear activation
+
+        if self.activation:
+            h = self.activation(h) # non-linear activation
         
         if self.residual:
             h = h_in + h # residual connection
-        
-        h = F.dropout(h, self.dropout, training=self.training)
+
+        h = self.dropout(h)
         
         return h
     

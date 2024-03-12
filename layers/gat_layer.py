@@ -35,26 +35,29 @@ class GATv2Layer(nn.Module):
     Using dgl builtin GATConv by default:
     https://github.com/graphdeeplearning/benchmarking-gnns/commit/206e888ecc0f8d941c54e061d5dffcc7ae2142fc
     """    
-    def __init__(self, in_dim, out_dim, num_heads, batch_norm, feat_dropout, attn_dropout, neg_slope, residual, activ=F.elu):
+    def __init__(self, in_dim, out_dim, num_heads, batch_norm, feat_dropout, attn_dropout, neg_slope, residual, activ=F.leaky_relu):
         super().__init__()
         self.batch_norm = batch_norm
         self.activation = activ
+        self.residual = residual
         if in_dim != (out_dim*num_heads):
             self.residual = False
 
-        self.gatconv = GATv2Conv(in_dim, out_dim, num_heads, feat_dropout, attn_dropout, neg_slope, residual, activation=None,
+        self.gatconv = GATv2Conv(in_dim, out_dim, num_heads, feat_dropout, attn_dropout, neg_slope, residual=False, activation=None,
                                  allow_zero_in_degree=True, bias=True)
 
-        if self.batch_norm:
-            self.batchnorm_h = nn.BatchNorm1d(num_heads * out_dim)
+        self.batchnorm_h = nn.BatchNorm1d(num_heads * out_dim)
 
     def forward(self, g, h):
+        h_in = h
         h = self.gatconv(g, h)
+        h = h.flatten(1)
         if self.batch_norm:
-            h = h.flatten(1)
             h = self.batchnorm_h(h)
-        if self.activation is not None:
+        if self.activation:
             h = self.activation(h)
+        if self.residual:
+            h = h + h_in
         return h
 
 

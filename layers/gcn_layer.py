@@ -31,7 +31,7 @@ class GCNLayer(nn.Module):
     """
         Param: [in_dim, out_dim]
     """
-    def __init__(self, in_dim, out_dim, batch_norm, in_feat_dropout, residual=False, activ=F.elu):
+    def __init__(self, in_dim, out_dim, batch_norm, in_feat_dropout, residual=False, activ=F.leaky_relu):
         super().__init__()
         self.batch_norm = batch_norm
         self.residual = residual
@@ -42,9 +42,8 @@ class GCNLayer(nn.Module):
         self.dropout = nn.Dropout(in_feat_dropout)
         self.conv = GraphConv(in_dim, out_dim, allow_zero_in_degree=True)
 
-    def forward(self, g, feature):
+    def forward(self, g, h):
 
-        h = self.dropout(feature)
         h_in = h   # to be used for residual connection
         h = self.conv(g, h)
 
@@ -54,8 +53,11 @@ class GCNLayer(nn.Module):
         if self.activation:
             h = self.activation(h)
 
+        h = self.dropout(h)
+
         if self.residual:
             h = h_in + h # residual connection
+
 
 
         return h

@@ -31,12 +31,30 @@ def positional_encoding(g, pos_enc_dim):
     return g
 
 
-def node_degree(g):
+def basic_features(nxgraph):
     """
-    adds node degree as a feature
+    input: networkx graph
+    adds basic structural features for each node: node degree, pagerank, etc.
+    output: tensor of shape (num nodes, input dim)
     """
-    degrees = g.in_degrees()
-    degrees = degrees.view(g.number_of_nodes(), 1)
-    feats = torch.cat((degrees, torch.zeros(g.number_of_nodes(), 1)), dim=1)
-    g.ndata['feat'] = feats
-    return g
+    node_degrees = dict(nxgraph.degree())
+    degree_centrality = nx.degree_centrality(nxgraph)
+    betweenness_centrality = nx.betweenness_centrality(nxgraph)
+    closeness_centrality = nx.closeness_centrality(nxgraph)
+    pagerank_centrality = nx.pagerank(nxgraph)
+    harmonic_centrality = nx.harmonic_centrality(nxgraph)
+    load_centrality = nx.load_centrality(nxgraph)
+    clustering_coefficient = nx.clustering(nxgraph)
+    # make it into an array
+    features_array = np.array([
+        list(node_degrees.values()),
+        list(degree_centrality.values()),
+        list(betweenness_centrality.values()),
+        list(closeness_centrality.values()),
+        list(pagerank_centrality.values()),
+        list(harmonic_centrality.values()),
+        list(load_centrality.values()),
+        list(clustering_coefficient.values())])
+    features_array = features_array.T
+    features_tensor = torch.tensor(features_array)
+    return features_tensor.to(dtype=torch.float32)

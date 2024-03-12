@@ -9,7 +9,7 @@ import torch
 import networkx as nx
 from scipy import sparse as sp
 import numpy as np
-from data.input_features import node_degree
+from data.input_features import basic_features
 
 
 class load_CODataSetDGL(torch.utils.data.Dataset):
@@ -21,8 +21,9 @@ class load_CODataSetDGL(torch.utils.data.Dataset):
                  data_dir,
                  name,
                  split,
-                 features="degree"):
+                 features="basic"):
 
+        self.name = name
         self.split = split.lower()
         self.is_test = self.split == 'test'
         self.features = features
@@ -37,27 +38,29 @@ class load_CODataSetDGL(torch.utils.data.Dataset):
     def _prepare(self):
 
         print("preparing graphs for the %s set..." % (self.split.upper()))
-
+        obj_values = []
         for data in self.dataset:
             nx_graph = data[0]
             labels_list = data[1]
+            obj_values.append(len(labels_list[0]))
 
             # Create the DGL Graph
             g = dgl.from_networkx(nx_graph)
 
             # constant node features
             node_feat_dim = 1
-            if self.features == 'degree':
-                g = node_degree(g)
-                node_feat_dim = 2
+            if self.features == 'basic':
+                features = basic_features(nx_graph)
+                node_feat_dim = 9
+                g.ndata['feat'] = features
             elif self.features == "constant":
                 node_feat_dim = 1
                 g.ndata['feat'] = torch.zeros(g.number_of_nodes(), node_feat_dim, dtype=torch.long)
 
             # adding edge features for Residual Gated ConvNet
             # edge_feat_dim = g.ndata['feat'].size(1) # dim same as node feature dim
-            edge_feat_dim = 1  # dim same as node feature dim
-            g.edata['feat'] = torch.zeros(g.number_of_edges(), edge_feat_dim, dtype=torch.float)
+            edge_feat_dim = 1
+            g.edata['feat'] = torch.ones(g.number_of_edges(), edge_feat_dim, dtype=torch.float)
 
             # change labels from list of nodes to binary
             converted_labels_list = []
@@ -70,7 +73,7 @@ class load_CODataSetDGL(torch.utils.data.Dataset):
                         temp_labels.append(0)
                 converted_labels_list.append(temp_labels)
 
-            if self.split == "test":
+            if self.split == "test" or self.split == "train" or self.split == "val":
                 self.graph_lists.append(g)
                 while len(converted_labels_list) < 100:
                     zeros_list = [0 for _ in range(self.graph_size)]
@@ -80,6 +83,9 @@ class load_CODataSetDGL(torch.utils.data.Dataset):
                 for labels in converted_labels_list:
                     self.graph_lists.append(g)
                     self.node_labels.append(labels)
+                    break # comment out if you want to include all solutions
+
+        print("Average objective value:", sum(obj_values)/len(obj_values))
 
         if self.split == "test":
             self.node_labels = np.array(self.node_labels)
@@ -176,7 +182,7 @@ class CODataset(torch.utils.data.Dataset):
             self.dataset = load_CODataSetDGL(data_dir, name, split='val', features=self.features)
         if self.split == "test":
             self.dataset = load_CODataSetDGL(data_dir, name, split='test', features=self.features)
-        print(f"[I] Finished loading {len(self.dataset)} graphs.")
+        print(f"[I] Finished loading {len(self.dataset)} graphs for {self.name} dataset with {self.features} features.")
         print("[I] Data load time: {:.4f}s".format(time.time() - start))
 
     # form a mini batch from a given list of samples = [(graph, label) pairs]

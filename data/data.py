@@ -1,9 +1,6 @@
 """
     File to load dataset based on user control from main file
 """
-from data.SBMs import SBMsDataset
-from data.TSP import TSPDataset
-from data.WikiCS import WikiCSDataset
 from data.CO import CODataset
 
 
