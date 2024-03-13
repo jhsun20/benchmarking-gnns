@@ -3,7 +3,8 @@
 **/*.ipynb_checkpoints/
 **/__pycache__
 out/
-
+.vscode/
+.idea/
 gmail.py
 
 #SBM datasets

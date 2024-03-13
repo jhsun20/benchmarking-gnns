@@ -12,7 +12,8 @@ import glob
 import argparse, json
 import pickle
 import json
-
+from typing import Union
+from ray.train import report
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -31,6 +32,7 @@ from tqdm import tqdm
 from nets.MC_node_classification.load_net import gnn_model  # import GNNs
 from data.data import LoadData  # import dataset
 
+_root = os.getcwd()
 """
     GPU Setup
 """
@@ -38,10 +40,10 @@ from data.data import LoadData  # import dataset
 
 def gpu_setup(use_gpu, gpu_id):
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
-
+    if gpu_id >= 0:
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
     if torch.cuda.is_available() and use_gpu:
-        print('CUDA available with GPU:', torch.cuda.get_device_name(0))
+        print(f'CUDA available with GPU:', torch.cuda.get_device_name(0))
         device = torch.device("cuda")
     else:
         print('cuda not available')
@@ -156,6 +158,14 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
             writer.add_scalar('val/_f1', epoch_val_f1, epoch)
             # writer.add_scalar('test/_acc', epoch_test_acc, epoch)
             writer.add_scalar('learning_rate', optimizer.param_groups[0]['lr'], epoch)
+            report({
+                "epoch_train_loss":epoch_train_loss, 
+                "epoch_val_loss":epoch_val_loss, 
+                "epoch_train_acc":epoch_train_acc, 
+                "epoch_val_acc":epoch_val_acc,
+                "epoch_train_f1":epoch_train_f1, 
+                "epoch_val_f1":epoch_val_f1
+                })
 
             t.set_postfix(time=time.time() - start, lr=optimizer.param_groups[0]['lr'],
                           train_loss=epoch_train_loss, val_loss=epoch_val_loss,
@@ -198,7 +208,13 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
     print("Convergence Time (Epochs): {:.4f}".format(epoch))
     print("TOTAL TIME TAKEN: {:.4f}s".format(time.time() - start0))
     print("AVG TIME PER EPOCH: {:.4f}s".format(np.mean(per_epoch_time)))
-
+    report({
+        "val_acc":val_acc, 
+        "train_acc":train_acc, 
+        "val_f1":val_f1, 
+        "train_f1":train_f1, 
+        "total_epoch":epoch
+        })
     writer.close()
 
     """
@@ -213,9 +229,9 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
 
     os.makedirs(losses_dir, exist_ok=True)
     with open(losses_dir + 'train.json', 'w+') as output_file:
-        json.dump([epoch_train_accs, epoch_train_losses], output_file, indent=2)
+        json.dump([epoch_train_accs, epoch_train_losses], output_file, indent=4)
     with open(losses_dir + 'val.json', 'w+') as output_file:
-        json.dump([epoch_val_accs, epoch_val_losses], output_file, indent=2)
+        json.dump([epoch_val_accs, epoch_val_losses], output_file, indent=4)
 
     if test:
         dataset_name = test_dataset.name
@@ -277,18 +293,22 @@ def test_pipeline(model_name, test_dataset, weights_path, params, net_params, se
                         test_acc, test_f1, (time.time() - start0) / 3600))
 
 
-def train(config_path):
+def train(config_path:Union[str,dict]):
     """
     train model
     """
-    with open(config_path) as f:
-        config = json.load(f)
+    if isinstance(config_path,str):
+        with open(config_path) as f:
+            config = json.load(f)
+    elif isinstance(config_path,dict):
+        config = config_path
     # set up device
     device = gpu_setup(config['setup']['gpu']['use'], config['setup']['gpu']['id'])
+    config['setup']['gpu']['id'] = device.index
     # setup model, train dataset, output directory
     model = config['setup']['model']
     dataset_name = config['setup']['train_dataset']
-    out_dir = config['setup']['out_dir']
+    out_dir = os.path.join(_root,config['setup']['out_dir'])
     features = config['setup']['features']
     # save config file
     write_config_file = out_dir + 'configs/config_' + model + "_" + dataset_name + "_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y')
@@ -298,18 +318,22 @@ def train(config_path):
     write_file_name_test = out_dir + 'results/TEST_result_' + model + "_" + dataset_name + "_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y')
     losses_dir = out_dir + 'losses/' + model + "_" + dataset_name + "_GPU" + "_" + time.strftime('%Hh%Mm%Ss_on_%b_%d_%Y') + '/'
     dirs = root_log_dir, root_ckpt_dir, write_file_name_train, write_file_name_test, losses_dir
-
+    for d in dirs:
+        os.makedirs(d, exist_ok=True)
+    os.makedirs(out_dir + 'configs', exist_ok=True)
     with open(write_config_file + '.json', 'w') as f:
-        json.dump(config, f)
+        json.dump(config, f, indent=4)
 
     # load dataset
-    train_dataset = LoadData(data_dir='data/CO/train', name=dataset_name, split='train', features=features)
-    val_dataset = LoadData(data_dir='data/CO/val', name=dataset_name, split='val', features=features)
+    train_dataset = LoadData(data_dir=os.path.join(_root, 'data/CO/train'), name=dataset_name, split='train', features=features)
+    val_dataset = LoadData(data_dir=os.path.join(_root,'data/CO/val'), name=dataset_name, split='val', features=features)
     if config['setup']['test_dataset'] != "none":
-        test_dataset = LoadData(data_dir='data/CO/test', name=config['setup']['test_dataset'], split='test', features=features)
-    print("sample graph node features")
+        test_dataset = LoadData(data_dir=os.path.join(_root,'data/CO/test'), name=config['setup']['test_dataset'], split='test', features=features)
+    else:
+        test_dataset = None
     sample = train_dataset.dataset[0][0].ndata['feat']
-    print(sample)
+    # print("sample graph node features")
+    # print(sample)
     # set up parameters
     setup = config['setup']
     params = {**config['params'], **config['tunable_params']}
@@ -324,28 +348,32 @@ def train(config_path):
     if not os.path.exists(out_dir + 'configs'):
         os.makedirs(out_dir + 'configs')
 
-    train_test_pipeline(model, train_dataset, val_dataset, params, net_params, setup, dirs, test=True, test_dataset=test_dataset)
+    train_test_pipeline(model, train_dataset, val_dataset, params, net_params, setup, dirs, test=False, test_dataset=test_dataset)
 
 
-def test(config_path):
+def test(config_path: Union[str,dict]):
     """
     test model
     """
-    with open(config_path) as f:
-        config = json.load(f)
+    if isinstance(config_path,str):
+        with open(config_path) as f:
+            config = json.load(f)
+    elif isinstance(config_path,dict):
+        config = config_path
     # get OLD parameters for the saved model
-    weights_path = config['setup']['saved_weights']
+    weights_path = os.path.join(_root, config['setup']['saved_weights'])
     with open(config['setup']['saved_config']) as f:
         train_config = json.load(f)
     # set up device
     device = gpu_setup(config['setup']['gpu']['use'], config['setup']['gpu']['id'])
     # setup model, train dataset, output directory
+    config['setup']['gpu']['id'] = device.index
     model = config['setup']['model']
     dataset_name = config['setup']['test_dataset']
-    out_dir = config['setup']['out_dir']
+    out_dir = os.path.join(_root,config['setup']['out_dir'])
     features = train_config['setup']['features']
     # load test set
-    test_dataset = LoadData(data_dir='data/CO/test', name=dataset_name, split='test', features=features)
+    test_dataset = LoadData(data_dir=os.path.join(_root, 'data/CO/test'), name=dataset_name, split='test', features=features)
     sample = test_dataset.dataset[0][0].ndata['feat']
     setup = train_config['setup']
     params = {**train_config['params'], **train_config['tunable_params']}
@@ -360,31 +388,36 @@ def test(config_path):
     dirs_test = write_file_name_test
     test_pipeline(model, test_dataset, weights_path, params, net_params, setup, dirs_test)
 
+__train_config_dict__ = {
+    'GAT': 'configs/MC/MC_GAT_100k_train_base.json',
+    'EGT': 'configs/MC/MC_EGT_100k_train_base.json',
+    'GCN': 'configs/MC/MC_GCN_100k_train_base.json',
+    'GIN': 'configs/MC/MC_GIN_100k_train_base.json',
+    'GMM': 'configs/MC/MC_GMM_100k_train_base.json',
+    'GraphSage': 'configs/MC/MC_GraphSage_100k_train_base.json',
+    'GatedGCN': 'configs/MC/MC_GatedGCN_100k_train_base.json',
+    'PNA': 'configs/MC/MC_PNA_100k_train_base.json'
+}
 
+__test_config_dict__ = {
+    'GAT': 'configs/MC/test/MC_GAT_100k_test_base.json',
+    'EGT': 'configs/MC/test/MC_EGT_100k_test_base.json',
+    'GCN': 'configs/MC/test/MC_GCN_100k_test_base.json',
+    'GIN': 'configs/MC/test/MC_GIN_100k_test_base.json',
+    'GMM': 'configs/MC/test/MC_GMM_100k_test_base.json',
+    'GraphSage': 'configs/MC/test/MC_GraphSage_100k_test_base.json',
+    'GatedGCN': 'configs/MC/test/MC_GatedGCN_100k_test_base.json',
+    'PNA': 'configs/MC/test/MC_PNA_100k_test_base.json'
+}
 def main():
 
-    # load config file
-    config_path = 'configs/MC/MC_GAT_100k_train_base.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MC/MC_EGT_100k_train_base.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GCN_100k_train_base.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GIN_100k_train_base.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GMM_100k_train_base.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GraphSage_100k_train_base.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GatedGCN_100k_train_base.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MC/MC_PNA_100k_train_base.json'
-    #train(config_path=config_path)
-
+    config_path = __train_config_dict__['PNA']
+    train(config_path=config_path)
+    
     # LOAD NEW CONFIG IF NEED TO
-    config_path = 'configs/MC/test/MC_PNA_100k_test_base.json'
+    config_path = __test_config_dict__['GAT']
     #test(config_path=config_path)
 
 
-
-main()
+if __name__ == '__main__':
+    main()
