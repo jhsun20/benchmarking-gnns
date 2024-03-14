@@ -158,14 +158,6 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
             writer.add_scalar('val/_f1', epoch_val_f1, epoch)
             # writer.add_scalar('test/_acc', epoch_test_acc, epoch)
             writer.add_scalar('learning_rate', optimizer.param_groups[0]['lr'], epoch)
-            report({
-                "epoch_train_loss":epoch_train_loss, 
-                "epoch_val_loss":epoch_val_loss, 
-                "epoch_train_acc":epoch_train_acc, 
-                "epoch_val_acc":epoch_val_acc,
-                "epoch_train_f1":epoch_train_f1, 
-                "epoch_val_f1":epoch_val_f1
-                })
 
             t.set_postfix(time=time.time() - start, lr=optimizer.param_groups[0]['lr'],
                           train_loss=epoch_train_loss, val_loss=epoch_val_loss,

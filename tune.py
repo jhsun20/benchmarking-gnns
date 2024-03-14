@@ -11,7 +11,6 @@ import argparse
 
 # %%
 # define hyperparameter space
-ray.init()
 
 def get_search_space(model: str,dataset:str):
     search_space = {}
@@ -19,7 +18,7 @@ def get_search_space(model: str,dataset:str):
     search_space['setup'] = {
         "gpu": {
             "use": True,
-            "id": 2
+            "id": -1
         },
         "model": model,
         "train_dataset": dataset,
@@ -180,21 +179,23 @@ _models = ['EGT','GAT','GAtedGCN','GCN','GIN','GMM','GraphSage','PNA']
 
 def main(args):
     reporter = tune.CLIReporter(
-        metric_columns=["val_acc", "training_iteration"],
+        metric_columns=["val_f1"],
+        parameter_columns=["setup/model","setup/dataset", "tunable_net_params/batch_size", "tunable_net_params/loss_weight"],
         print_intermediate_tables=False,
-        max_column_length=100,
-        max_report_frequency=30
+        max_column_length=12,
+        max_report_frequency=30,
+        max_progress_rows=100
     )
     tune_configer= TuneConfig(
-        max_concurrent_trials=5,  # todo
-        num_samples=10,
-        # search_alg=HyperOptSearch(metric="val_f1", mode="max")
+        max_concurrent_trials=12,  # todo
+        num_samples=20,
+        search_alg=HyperOptSearch(metric="val_f1", mode="max")
     )
     run_configer = RunConfig(
-        progress_reporter=None,
-        verbose=1,
+        progress_reporter=reporter,
+        # verbose=1,
         stop={"time_total_s":7200},
-        failure_config=FailureConfig(fail_fast=True)
+        failure_config=FailureConfig(fail_fast=False)
     )
     train_func = {
         "MC": train_MC,
@@ -203,7 +204,7 @@ def main(args):
     }[args.dataset]
     
     tuner = tune.Tuner(
-        trainable=tune.with_resources(trainable=train_func, resources={"cpu": 1, "gpu": 0.3}),
+        trainable=tune.with_resources(trainable=train_func, resources={"cpu": 1, "gpu": 1}),
         param_space=get_search_space(args.model, args.dataset),
         run_config=run_configer,
         tune_config=tune_configer
