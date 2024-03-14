@@ -8,7 +8,8 @@ from main_MC_node_classification import train as train_MC
 from main_MIS_node_classification import train as train_MIS
 from main_MVC_node_classification import train as train_MVC
 import argparse
-
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,3"
 # %%
 # define hyperparameter space
 
@@ -55,7 +56,7 @@ def get_search_space(model: str,dataset:str):
             "batch_size": tune.choice([16, 32, 64]),
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "attn_drop": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
-            "loss_weight": [tune.loguniform(1e-1,1e1),1.0],
+            "loss_weight": [1.0, tune.loguniform(1e-1,1e1)],
             "node_hidden_dim": tune.choice([16,32,64]),
             "n_heads": tune.choice([4,8]),
         }
@@ -74,7 +75,7 @@ def get_search_space(model: str,dataset:str):
             "neg_slope": tune.choice([0.0,0.2,0.4,0.8]),
             "residual": tune.choice([True, False]),
             "self_loop": tune.choice([True, False]),
-            "loss_weight": [tune.loguniform(1e-1,1e1),1.0]
+            "loss_weight": [1.0, tune.loguniform(1e-1,1e1)]
         }
     if model == 'GatedGCN':
         search_space["net_params"] = {
@@ -88,7 +89,7 @@ def get_search_space(model: str,dataset:str):
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "neg_slope": tune.choice([0.0,0.2,0.4,0.8]),
             "residual": tune.choice([True, False]),
-            "loss_weight": [tune.loguniform(1e-1,1e1),1.0]
+            "loss_weight": [1.0, tune.loguniform(1e-1,1e1)]
         }
     if model == 'GCN':
         search_space["net_params"] = {
@@ -102,7 +103,7 @@ def get_search_space(model: str,dataset:str):
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "residual": tune.choice([True, False]),
             "self_loop": tune.choice([True, False]),
-            "loss_weight": [tune.loguniform(1e-1,1e1),1.0]
+            "loss_weight": [1.0, tune.loguniform(1e-1,1e1)]
         }
     if model == 'GIN':
         search_space["net_params"] = {
@@ -115,7 +116,7 @@ def get_search_space(model: str,dataset:str):
             "batch_norm": tune.choice([True, False]),
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "residual": tune.choice([True, False]),
-            "loss_weight": [tune.loguniform(1e-1,1e1),1.0],
+            "loss_weight": [1.0, tune.loguniform(1e-1,1e1)],
             "apply_fn_layers": tune.choice([1, 2, 3]),
             "learn_eps": tune.choice([True, False]),
             "aggr_type": tune.choice(['sum', 'max','mean'])
@@ -132,7 +133,7 @@ def get_search_space(model: str,dataset:str):
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "neg_slope": tune.choice([0.0,0.2,0.4,0.8]),
             "residual": tune.choice([True, False]),
-            "loss_weight": [tune.loguniform(1e-1,1e1),1.0],
+            "loss_weight": [1.0, tune.loguniform(1e-1,1e1)],
             "aggr_type": tune.choice(['sum', 'max','mean']),
             "pseudo_dim": tune.choice([2,3,4]),
             "kernel": tune.choice([1,2,3,4])
@@ -149,7 +150,7 @@ def get_search_space(model: str,dataset:str):
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "sage_aggregator": tune.choice(['mean', 'gcn', 'pool', 'lstm']),
             "residual": tune.choice([True, False]),
-            "loss_weight": [tune.loguniform(1e-1,1e1),1.0]
+            "loss_weight": [1.0, tune.loguniform(1e-1,1e1)]
         }
     if model == 'PNA':
         search_space["net_params"] = {
@@ -165,7 +166,7 @@ def get_search_space(model: str,dataset:str):
             "batch_norm": tune.choice([True, False]),
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "residual": tune.choice([True, False]),
-            "loss_weight": [tune.loguniform(1e-1,1e1),1.0],
+            "loss_weight": [1.0, tune.loguniform(1e-1,1e1)],
             "delta": tune.uniform(0.0, 10.0),
         }
         
@@ -204,7 +205,7 @@ def main(args):
     }[args.dataset]
     
     tuner = tune.Tuner(
-        trainable=tune.with_resources(trainable=train_func, resources={"cpu": 1, "gpu": 1}),
+        trainable=tune.with_resources(trainable=train_func, resources={"cpu": 1, "gpu": 0.5}),
         param_space=get_search_space(args.model, args.dataset),
         run_config=run_configer,
         tune_config=tune_configer
