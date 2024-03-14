@@ -56,8 +56,8 @@ def get_search_space(model: str,dataset:str):
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "attn_drop": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "loss_weight": [tune.loguniform(1e-1,1e1),1.0],
-            "node_hidden_dim": tune.choice([32, 64, 128]),
-            "n_heads": tune.choice([4, 8, 16]),
+            "node_hidden_dim": tune.choice([16,32,64]),
+            "n_heads": tune.choice([4,8]),
         }
     if model == 'GAT':
         search_space["net_params"] = {
@@ -82,8 +82,8 @@ def get_search_space(model: str,dataset:str):
         }
         search_space["tunable_net_params"] = {
             "batch_size": tune.choice([16, 32, 64]),
-            "hidden_dim": tune.choice([32, 64, 128]),
-            "out_dim": tune.choice([16, 32, 64]),
+            "hidden_dim": tune.choice([16,32, 64]),
+            "out_dim": tune.choice([8, 16, 32]),
             "batch_norm": tune.choice([True, False]),
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "neg_slope": tune.choice([0.0,0.2,0.4,0.8]),
@@ -96,8 +96,8 @@ def get_search_space(model: str,dataset:str):
         }
         search_space["tunable_net_params"] = {
             "batch_size": tune.choice([16, 32, 64]),
-            "hidden_dim": tune.choice([32, 64, 128]),
-            "out_dim": tune.choice([16, 32, 64]),
+            "hidden_dim": tune.choice([16,32, 64]),
+            "out_dim": tune.choice([8, 16, 32]),
             "batch_norm": tune.choice([True, False]),
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "residual": tune.choice([True, False]),
@@ -110,8 +110,8 @@ def get_search_space(model: str,dataset:str):
         }
         search_space["tunable_net_params"] = {
             "batch_size": tune.choice([16, 32, 64]),
-            "hidden_dim": tune.choice([32, 64, 128]),
-            "out_dim": tune.choice([16, 32, 64]),
+            "hidden_dim": tune.choice([16, 32, 64]),
+            "out_dim": tune.choice([8, 16, 32]),
             "batch_norm": tune.choice([True, False]),
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "residual": tune.choice([True, False]),
@@ -126,8 +126,8 @@ def get_search_space(model: str,dataset:str):
         }
         search_space["tunable_net_params"] = {
             "batch_size": tune.choice([16, 32, 64]),
-            "hidden_dim": tune.choice([32, 64, 128]),
-            "out_dim": tune.choice([16, 32, 64]),
+            "hidden_dim": tune.choice([16, 32, 64]),
+            "out_dim": tune.choice([8, 16, 32]),
             "batch_norm": tune.choice([True, False]),
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "neg_slope": tune.choice([0.0,0.2,0.4,0.8]),
@@ -143,8 +143,8 @@ def get_search_space(model: str,dataset:str):
         }
         search_space["tunable_net_params"] = {
             "batch_size": tune.choice([16, 32, 64]),
-            "hidden_dim": tune.choice([32, 64, 128]),
-            "out_dim": tune.choice([16, 32, 64]),
+            "hidden_dim": tune.choice([16, 32, 64]),
+            "out_dim": tune.choice([8, 16, 32]),
             "batch_norm": tune.choice([True, False]),
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "sage_aggregator": tune.choice(['mean', 'gcn', 'pool', 'lstm']),
@@ -160,8 +160,8 @@ def get_search_space(model: str,dataset:str):
         }
         search_space["tunable_net_params"] = {
             "batch_size": tune.choice([16, 32, 64]),
-            "hidden_dim": tune.choice([32, 64, 128]),
-            "out_dim": tune.choice([16, 32, 64]),
+            "hidden_dim": tune.choice([16, 32, 64]),
+            "out_dim": tune.choice([8, 16, 32]),
             "batch_norm": tune.choice([True, False]),
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "residual": tune.choice([True, False]),
@@ -180,7 +180,7 @@ _models = ['EGT','GAT','GAtedGCN','GCN','GIN','GMM','GraphSage','PNA']
 def main(args):
     reporter = tune.CLIReporter(
         metric_columns=["val_f1"],
-        parameter_columns=["setup/model","setup/dataset", "tunable_net_params/batch_size", "tunable_net_params/loss_weight"],
+        parameter_columns=["total_param","setup/model","setup/dataset", "tunable_net_params/batch_size", "tunable_net_params/loss_weight"],
         print_intermediate_tables=False,
         max_column_length=12,
         max_report_frequency=30,

@@ -13,7 +13,7 @@ import argparse, json
 import pickle
 import json
 from typing import Union
-import ray.tune as tune
+from ray.train import report
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -33,6 +33,8 @@ from nets.MIS_node_classification.load_net import gnn_model  # import GNNs
 from data.data import LoadData  # import dataset
 
 _root = os.getcwd()
+
+PARAM_LIMIT = 1e5
 """
     GPU Setup
 """
@@ -201,7 +203,13 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
     print("Convergence Time (Epochs): {:.4f}".format(epoch))
     print("TOTAL TIME TAKEN: {:.4f}s".format(time.time() - start0))
     print("AVG TIME PER EPOCH: {:.4f}s".format(np.mean(per_epoch_time)))
-
+    report({
+        "val_acc":val_acc, 
+        "train_acc":train_acc, 
+        "val_f1":val_f1, 
+        "train_f1":train_f1, 
+        "total_epoch":epoch
+        })
     writer.close()
 
     """
@@ -317,6 +325,8 @@ def train(config_path:Union[str,dict]):
     val_dataset = LoadData(data_dir=os.path.join(_root,'data/CO/val'), name=dataset_name, split='val', features=features)
     if config['setup']['test_dataset'] != "none":
         test_dataset = LoadData(data_dir=os.path.join(_root,'data/CO/test'), name=config['setup']['test_dataset'], split='test', features=features)
+    else:
+        test_dataset = None
     sample = train_dataset.dataset[0][0].ndata['feat']
     # print("sample graph node features")
     # print(sample)
@@ -328,13 +338,23 @@ def train(config_path:Union[str,dict]):
     net_params['n_classes'] = 2
     net_params['edge_dim'] = 1
     net_params['total_param'] = view_model_param(model, net_params)
+    if net_params['total_param'] > PARAM_LIMIT:
+        report({
+            "total_param": net_params['total_param'],
+            "val_acc":-1, 
+            "train_acc":-1, 
+            "val_f1":-1, 
+            "train_f1":-1, 
+            "total_epoch":-1
+        })
+        return
 
     if not os.path.exists(out_dir + 'results'):
         os.makedirs(out_dir + 'results')
     if not os.path.exists(out_dir + 'configs'):
         os.makedirs(out_dir + 'configs')
 
-    train_test_pipeline(model, train_dataset, val_dataset, params, net_params, setup, dirs, test=True, test_dataset=test_dataset)
+    train_test_pipeline(model, train_dataset, val_dataset, params, net_params, setup, dirs, test=False, test_dataset=test_dataset)
 
 
 def test(config_path: Union[str,dict]):

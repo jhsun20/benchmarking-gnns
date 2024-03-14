@@ -33,6 +33,8 @@ from nets.MC_node_classification.load_net import gnn_model  # import GNNs
 from data.data import LoadData  # import dataset
 
 _root = os.getcwd()
+
+PARAM_LIMIT = 1e5
 """
     GPU Setup
 """
@@ -334,6 +336,16 @@ def train(config_path:Union[str,dict]):
     net_params['n_classes'] = 2
     net_params['edge_dim'] = 1
     net_params['total_param'] = view_model_param(model, net_params)
+    if net_params['total_param'] > PARAM_LIMIT:
+        report({
+            "total_param": net_params['total_param'],
+            "val_acc":-1, 
+            "train_acc":-1, 
+            "val_f1":-1, 
+            "train_f1":-1, 
+            "total_epoch":-1
+        })
+        return
 
     if not os.path.exists(out_dir + 'results'):
         os.makedirs(out_dir + 'results')
