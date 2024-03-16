@@ -1,0 +1,55 @@
+Dataset: MVC,
+Model: EGT
+
+params={'seed': 'random', 'epochs': 50, 'print_epoch_interval': 1, 'max_time': 24, 'init_lr': 0.01, 'lr_reduce_factor': 0.1, 'lr_schedule_patience': 10, 'min_lr': 0.0001, 'weight_decay': 0.0005}
+
+net_params={'L': 4, 'edge_hidden_dim': 1, 'edge_update': False, 'graph_size': 30, 'num_virtual_nodes': 0, 'batch_size': 32, 'dropout': 0.2, 'attn_drop': 0.2, 'loss_weight': [1, 1], 'node_hidden_dim': 64, 'n_heads': 8, 'in_dim': 8, 'device': device(type='cuda'), 'n_classes': 2, 'edge_dim': 1, 'total_param': 104220}
+
+EGTNet(
+  (nfeature): Linear(in_features=8, out_features=64, bias=True)
+  (efeature): Linear(in_features=1, out_features=1, bias=True)
+  (layers): ModuleList(
+    (0-3): 4 x EGTLayer(
+      (egtconv): EGTLayer(
+        (mha_ln_h): LayerNorm((64,), eps=1e-05, elementwise_affine=True)
+        (mha_ln_e): LayerNorm((1,), eps=1e-05, elementwise_affine=True)
+        (edge_input): Linear(in_features=1, out_features=8, bias=True)
+        (qkv_proj): Linear(in_features=64, out_features=192, bias=True)
+        (gate): Linear(in_features=1, out_features=8, bias=True)
+        (attn_dropout): Dropout(p=0.2, inplace=False)
+        (node_output): Linear(in_features=64, out_features=64, bias=True)
+        (mha_dropout_h): Dropout(p=0.2, inplace=False)
+        (node_ffn): Sequential(
+          (0): LayerNorm((64,), eps=1e-05, elementwise_affine=True)
+          (1): Linear(in_features=64, out_features=64, bias=True)
+          (2): ELU(alpha=1.0)
+          (3): Linear(in_features=64, out_features=64, bias=True)
+          (4): Dropout(p=0.2, inplace=False)
+        )
+      )
+    )
+  )
+  (MLP_layer): MLPReadout(
+    (FC_layers): ModuleList(
+      (0): Linear(in_features=64, out_features=32, bias=True)
+      (1): Linear(in_features=32, out_features=16, bias=True)
+      (2): Linear(in_features=16, out_features=2, bias=True)
+    )
+  )
+)
+
+Total Parameters: 104220
+
+
+    FINAL RESULTS
+VAL ACCURACY: 0.8061
+TRAIN ACCURACY: 0.8077
+VAL F1: 0.8502
+TRAIN F1: 0.8516
+
+
+    Convergence Time (Epochs): 49.0000
+Total Time Taken: 0.4225 hrs
+Average Time Per Epoch: 29.2662 s
+
+

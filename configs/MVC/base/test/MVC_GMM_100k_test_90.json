@@ -1,0 +1,15 @@
+{
+    "setup": {
+        "gpu": {
+            "use": true,
+            "id": 0
+        },
+        "model": "GMM",
+        "train_dataset": "MVC",
+        "test_dataset": "MVC_90_0.2",
+        "out_dir": "out/MVC_node_classification/",
+        "saved_weights": "saved_models/MVC/base/GMM/weights.pkl",
+        "saved_config" : "saved_models/MVC/base/GMM/MVC_GMM_100k_train_base.json"
+    }
+}
+

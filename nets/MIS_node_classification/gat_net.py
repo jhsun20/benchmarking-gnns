@@ -30,7 +30,7 @@ class GATNet(nn.Module):
         attn_drop = net_params['attn_drop']
         dropout = net_params['dropout']
         n_layers = net_params['L']
-        neg_slope = net_params['neg_slope']
+        neg_slope = 0.2
         residual = net_params['residual']
         n_classes = net_params['n_classes']
         self.loss_weight = net_params['loss_weight']

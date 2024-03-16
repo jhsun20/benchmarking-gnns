@@ -1,0 +1,52 @@
+Dataset: MVC,
+Model: PNA
+
+params={'seed': 'random', 'epochs': 50, 'print_epoch_interval': 1, 'max_time': 24, 'init_lr': 0.01, 'lr_reduce_factor': 0.5, 'lr_schedule_patience': 25, 'min_lr': 0.0001, 'weight_decay': 0.0005}
+
+net_params={'L': 4, 'aggregators': ['mean', 'max', 'min', 'std', 'var', 'sum', 'moment3'], 'scalers': ['identity', 'amplification', 'attenuation'], 'num_towers': 1, 'batch_size': 32, 'hidden_dim': 24, 'out_dim': 24, 'batch_norm': True, 'dropout': 0.2, 'residual': True, 'loss_weight': [1, 1], 'delta': 2.5, 'in_dim': 8, 'device': device(type='cuda'), 'n_classes': 2, 'edge_dim': 1, 'total_param': 58880}
+
+PNANet(
+  (feature): Linear(in_features=8, out_features=24, bias=True)
+  (layers): ModuleList(
+    (0-3): 4 x PNALayer(
+      (bn_node_h): BatchNorm1d(24, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (pnaconv): PNAConv(
+        (towers): ModuleList(
+          (0): PNAConvTower(
+            (M): Linear(in_features=48, out_features=24, bias=True)
+            (U): Linear(in_features=528, out_features=24, bias=True)
+            (dropout): Dropout(p=True, inplace=False)
+            (batchnorm): BatchNorm1d(24, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (mixing_layer): Sequential(
+          (0): Linear(in_features=24, out_features=24, bias=True)
+          (1): LeakyReLU(negative_slope=0.01)
+        )
+      )
+    )
+  )
+  (MLP_layer): MLPReadout(
+    (FC_layers): ModuleList(
+      (0): Linear(in_features=24, out_features=12, bias=True)
+      (1): Linear(in_features=12, out_features=6, bias=True)
+      (2): Linear(in_features=6, out_features=2, bias=True)
+    )
+  )
+)
+
+Total Parameters: 58880
+
+
+    FINAL RESULTS
+VAL ACCURACY: 0.7962
+TRAIN ACCURACY: 0.8022
+VAL F1: 0.8411
+TRAIN F1: 0.8467
+
+
+    Convergence Time (Epochs): 49.0000
+Total Time Taken: 0.7798 hrs
+Average Time Per Epoch: 53.0294 s
+
+

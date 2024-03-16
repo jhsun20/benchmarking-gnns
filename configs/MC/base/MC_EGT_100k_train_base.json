@@ -1,0 +1,47 @@
+{
+    "setup": {
+        "gpu": {
+            "use": true,
+            "id": 0
+        },
+        "model": "EGT",
+        "train_dataset": "MC",
+        "val_dataset": "MC",
+        "test_dataset": "MC",
+        "out_dir": "out/MC_node_classification/",
+        "features": "basic"
+    },
+
+    "tunable_params": {
+        "init_lr": 0.01,
+        "lr_reduce_factor": 0.5,
+        "lr_schedule_patience": 10,
+        "min_lr": 0.0005,
+        "weight_decay": 0.0005
+    },
+
+    "params": {
+        "seed": "random",
+        "epochs": 1000,
+        "print_epoch_interval": 1,
+        "max_time": 24
+    },
+
+    "tunable_net_params": {
+        "batch_size": 32,
+        "dropout": 0.2,
+        "attn_drop": 0.2,
+        "loss_weight": [0.3, 2]
+
+    },
+
+    "net_params": {
+        "L": 4,
+        "node_hidden_dim": 60,
+        "n_heads": 6,
+        "edge_hidden_dim": 1,
+        "edge_update": false,
+        "graph_size": 30,
+        "num_virtual_nodes": 0
+    }
+}

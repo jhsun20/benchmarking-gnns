@@ -30,16 +30,15 @@ class GATNet(nn.Module):
         attn_drop = net_params['attn_drop']
         dropout = net_params['dropout']
         n_layers = net_params['L']
-        neg_slope = net_params['neg_slope']
         residual = net_params['residual']
         n_classes = net_params['n_classes']
         self.loss_weight = net_params['loss_weight']
         self.n_classes = net_params['n_classes']
         self.device = net_params['device']
+        neg_slope = 0.2
         self.feature = nn.Linear(in_dim_node, hidden_dim * num_heads) # node feat is an integer
         self.layers = nn.ModuleList([GATv2Layer(hidden_dim * num_heads, hidden_dim, num_heads, batch_norm, dropout, attn_drop, neg_slope, residual) for _ in range(n_layers-1)])
-        self.layers.append(GATv2Layer(hidden_dim * num_heads, out_dim, 1, batch_norm, dropout, attn_drop, neg_slope,
-                                    residual))
+        self.layers.append(GATv2Layer(hidden_dim * num_heads, out_dim, 1, batch_norm, dropout, attn_drop, neg_slope, residual))
         self.MLP_layer = MLPReadout(out_dim, n_classes)
 
     def forward(self, g, h, e):

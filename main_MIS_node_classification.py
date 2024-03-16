@@ -120,7 +120,7 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
     epoch_train_f1s, epoch_val_f1s = [], []
 
     # import train functions for all other GCNs
-    from train.train_MVC_node_classification import train_epoch, train_epoch_all_optimal, evaluate_network, evaluate_network_all_optimal
+    from train.train_MIS_node_classification import train_epoch, train_epoch_all_optimal, evaluate_network, evaluate_network_all_optimal
 
     # train_loader = DataLoader(train_dataset.dataset, batch_size=net_params['batch_size'], shuffle=True, collate_fn=train_dataset.collate)
     # val_loader = DataLoader(val_dataset.dataset, batch_size=net_params['batch_size'], shuffle=False, collate_fn=train_dataset.collate)
@@ -258,7 +258,7 @@ def test_pipeline(model_name, test_dataset, weights_path, params, net_params, se
     model = model.to(device)
 
     # import train functions for all other GCNs
-    from train.train_MC_node_classification import evaluate_network_all_optimal
+    from train.train_MIS_node_classification import evaluate_network_all_optimal
 
     test_loader = DataLoader(test_dataset.dataset, batch_size=1, shuffle=False, collate_fn=test_dataset.collate)
 
@@ -370,9 +370,11 @@ def test(config_path):
 def main():
 
     # load config file
+    config_path = 'configs/MIS/MIS_EGT_100k_train_base.json'
+    #train(config_path=config_path)
     config_path = 'configs/MIS/MIS_GAT_100k_train_base.json'
     #train(config_path=config_path)
-    config_path = 'configs/MIS/MIS_EGT_100k_train_base.json'
+    config_path = 'configs/MIS/MIS_GatedGCN_100k_train_base.json'
     #train(config_path=config_path)
     config_path = 'configs/MIS/MIS_GCN_100k_train_base.json'
     #train(config_path=config_path)
@@ -382,14 +384,42 @@ def main():
     #train(config_path=config_path)
     config_path = 'configs/MIS/MIS_GraphSage_100k_train_base.json'
     #train(config_path=config_path)
-    config_path = 'configs/MIS/MIS_GatedGCN_100k_train_base.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MIS/MIS_PNA_100k_train_base.json'
-    #train(config_path=config_path)
+
 
     # LOAD NEW CONFIG IF NEED TO
-    config_path = 'configs/MIS/test/MIS_PNA_100k_test_base.json'
+    config_path = 'configs/MIS/base/test/MIS_EGT_100k_test_90.json'
     #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GAT_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GatedGCN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GCN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GIN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GMM_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GraphSage_100k_test_90.json'
+    #test(config_path=config_path)
+
+
+    # LOAD NEW CONFIG IF NEED TO
+    config_path = 'configs/MIS/base/test/MIS_EGT_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GAT_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GatedGCN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GCN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GIN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GMM_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GraphSage_100k_test_90_dense.json'
+    #test(config_path=config_path)
+
+
 
 
 

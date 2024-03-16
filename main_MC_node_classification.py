@@ -78,11 +78,6 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
 
     dataset_name = train_dataset.name
 
-    if model_name in ['GCN', 'GAT']:
-        if net_params['self_loop']:
-            train_dataset._add_self_loops()
-            # test_dataset._add_self_loops()
-
     root_log_dir, root_ckpt_dir, write_file_name, write_file_name_test, losses_dir = dirs
 
     log_dir = os.path.join(root_log_dir, "RUN_" + str(0))
@@ -242,10 +237,6 @@ def test_pipeline(model_name, test_dataset, weights_path, params, net_params, se
 
     dataset_name = test_dataset.name
 
-    if model_name in ['GCN', 'GAT']:
-        if net_params['self_loop']:
-            test_dataset._add_self_loops()
-
     write_file_name = dirs
     device = net_params['device']
 
@@ -364,10 +355,12 @@ def test(config_path):
 def main():
 
     # load config file
-    config_path = 'configs/MC/MC_GAT_100k_train_base.json'
-    #train(config_path=config_path)
     config_path = 'configs/MC/MC_EGT_100k_train_base.json'
     #train(config_path=config_path)
+    config_path = 'configs/MC/MC_GAT_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MC/MC_GatedGCN_100k_train_base.json'
+    #train(config_path=config_path
     config_path = 'configs/MC/MC_GCN_100k_train_base.json'
     #train(config_path=config_path)
     config_path = 'configs/MC/MC_GIN_100k_train_base.json'
@@ -376,14 +369,42 @@ def main():
     #train(config_path=config_path)
     config_path = 'configs/MC/MC_GraphSage_100k_train_base.json'
     #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GatedGCN_100k_train_base.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MC/MC_PNA_100k_train_base.json'
-    #train(config_path=config_path)
+
 
     # LOAD NEW CONFIG IF NEED TO
-    config_path = 'configs/MC/test/MC_PNA_100k_test_base.json'
+    config_path = 'configs/MC/base/test/MC_EGT_100k_test_90.json'
     #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GAT_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GatedGCN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GCN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GIN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GMM_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GraphSage_100k_test_90.json'
+    #test(config_path=config_path)
+
+
+    # LOAD NEW CONFIG IF NEED TO
+    config_path = 'configs/MC/base/test/MC_EGT_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GAT_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GatedGCN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GCN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GIN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GMM_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GraphSage_100k_test_90_dense.json'
+    #test(config_path=config_path)
+
+
 
 
 
