@@ -34,7 +34,6 @@ from data.data import LoadData  # import dataset
 
 _root = os.getcwd()
 
-PARAM_LIMIT = 1e5
 """
     GPU Setup
 """
@@ -314,8 +313,10 @@ def train(config_path:Union[str,dict]):
     val_dataset = LoadData(data_dir=os.path.join(_root,'data/CO/val'), name=dataset_name, split='val', features=features)
     if config['setup']['test_dataset'] != "none":
         test_dataset = LoadData(data_dir=os.path.join(_root,'data/CO/test'), name=config['setup']['test_dataset'], split='test', features=features)
+        test_flag = True
     else:
         test_dataset = None
+        test_flag = False
     sample = train_dataset.dataset[0][0].ndata['feat']
     # print("sample graph node features")
     # print(sample)
@@ -327,23 +328,13 @@ def train(config_path:Union[str,dict]):
     net_params['n_classes'] = 2
     net_params['edge_dim'] = 1
     net_params['total_param'] = view_model_param(model, net_params)
-    if net_params['total_param'] > PARAM_LIMIT:
-        report({
-            "total_param": net_params['total_param'],
-            "val_acc":-1, 
-            "train_acc":-1, 
-            "val_f1":-1, 
-            "train_f1":-1, 
-            "total_epoch":-1
-        })
-        return
 
     if not os.path.exists(out_dir + 'results'):
         os.makedirs(out_dir + 'results')
     if not os.path.exists(out_dir + 'configs'):
         os.makedirs(out_dir + 'configs')
 
-    train_test_pipeline(model, train_dataset, val_dataset, params, net_params, setup, dirs, test=False, test_dataset=test_dataset)
+    train_test_pipeline(model, train_dataset, val_dataset, params, net_params, setup, dirs, test=test_flag, test_dataset=test_dataset)
 
 
 def test(config_path: Union[str,dict]):
@@ -407,19 +398,19 @@ __test_config_dict__ = {
 def main():
 
     # load config file
-    config_path = 'configs/MC/MC_EGT_100k_train_base.json'
+    config_path = 'configs/MC/base/MC_EGT_100k_train_base.json'
+    train(config_path=config_path)
+    config_path = 'configs/MC/base/MC_GAT_100k_train_base.json'
     #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GAT_100k_train_base.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GatedGCN_100k_train_base.json'
+    config_path = 'configs/MC/base/MC_GatedGCN_100k_train_base.json'
     #train(config_path=config_path
-    config_path = 'configs/MC/MC_GCN_100k_train_base.json'
+    config_path = 'configs/MC/base/MC_GCN_100k_train_base.json'
     #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GIN_100k_train_base.json'
+    config_path = 'configs/MC/base/MC_GIN_100k_train_base.json'
     #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GMM_100k_train_base.json'
+    config_path = 'configs/MC/base/MC_GMM_100k_train_base.json'
     #train(config_path=config_path)
-    config_path = 'configs/MC/MC_GraphSage_100k_train_base.json'
+    config_path = 'configs/MC/base/MC_GraphSage_100k_train_base.json'
     #train(config_path=config_path)
 
 
@@ -457,7 +448,5 @@ def main():
     #test(config_path=config_path)
 
 
-
-
-
-main()
+if __name__ == '__main__':
+    main()
