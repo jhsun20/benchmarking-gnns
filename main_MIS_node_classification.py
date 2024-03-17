@@ -82,11 +82,6 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
 
     dataset_name = train_dataset.name
 
-    if model_name in ['GCN', 'GAT']:
-        if net_params['self_loop']:
-            train_dataset._add_self_loops()
-            # test_dataset._add_self_loops()
-
     root_log_dir, root_ckpt_dir, write_file_name, write_file_name_test, losses_dir = dirs
 
     log_dir = os.path.join(root_log_dir, "RUN_" + str(0))
@@ -252,10 +247,6 @@ def test_pipeline(model_name, test_dataset, weights_path, params, net_params, se
     start0 = time.time()
 
     dataset_name = test_dataset.name
-
-    if model_name in ['GCN', 'GAT']:
-        if net_params['self_loop']:
-            test_dataset._add_self_loops()
 
     write_file_name = dirs
     device = net_params['device']

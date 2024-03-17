@@ -72,7 +72,6 @@ def get_search_space_only_loss(model: str,dataset:str):
             "dropout": 0.2,
             "attn_drop": 0.2,
             "residual": True,
-            "self_loop": True,
             "loss_weight": [1.0, tune.loguniform(1e-1,1e1)]
         }
     if model == 'GatedGCN':
@@ -99,7 +98,6 @@ def get_search_space_only_loss(model: str,dataset:str):
             "batch_norm": True,
             "dropout": 0.2,
             "residual": True,
-            "self_loop": True,
             "loss_weight": [1.0, tune.loguniform(1e-1,1e1)]
         }
     if model == 'GIN':
@@ -213,7 +211,6 @@ def get_search_space(model: str,dataset:str):
             "attn_drop": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "neg_slope": tune.choice([0.0,0.2,0.4,0.8]),
             "residual": tune.choice([True, False]),
-            "self_loop": tune.choice([True, False]),
             "loss_weight": [1.0, tune.loguniform(1e-1,1e1)]
         }
     if model == 'GatedGCN':
@@ -240,7 +237,6 @@ def get_search_space(model: str,dataset:str):
             "batch_norm": tune.choice([True, False]),
             "dropout": tune.choice([0.0,0.1,0.2,0.3,0.4,0.5]),
             "residual": tune.choice([True, False]),
-            "self_loop": tune.choice([True, False]),
             "loss_weight": [1.0, tune.loguniform(1e-1,1e1)]
         }
     if model == 'GIN':
