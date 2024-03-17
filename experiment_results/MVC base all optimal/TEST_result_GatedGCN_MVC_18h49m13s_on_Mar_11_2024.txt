@@ -1,0 +1,45 @@
+Dataset: MVC,
+Model: GatedGCN
+
+params={'seed': 'random', 'epochs': 50, 'print_epoch_interval': 1, 'max_time': 24, 'init_lr': 0.01, 'lr_reduce_factor': 0.5, 'lr_schedule_patience': 25, 'min_lr': 1e-05, 'weight_decay': 0.0005}
+
+net_params={'L': 4, 'batch_size': 32, 'hidden_dim': 60, 'out_dim': 60, 'batch_norm': True, 'dropout': 0.2, 'neg_slope': 0.2, 'residual': True, 'loss_weight': [1, 1], 'in_dim': 8, 'device': device(type='cuda'), 'n_classes': 2, 'edge_dim': 1, 'total_param': 77627}
+
+GatedGCNNet(
+  (embedding_h): Linear(in_features=8, out_features=60, bias=True)
+  (embedding_e): Linear(in_features=1, out_features=60, bias=True)
+  (layers): ModuleList(
+    (0-3): 4 x GatedGCNLayer(
+      (batchnorm_h): BatchNorm1d(60, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (gatedconv): GatedGCNConv(
+        (dropout): Dropout(p=0.2, inplace=False)
+        (A): Linear(in_features=60, out_features=60, bias=True)
+        (B): Linear(in_features=60, out_features=60, bias=True)
+        (D): Linear(in_features=60, out_features=60, bias=True)
+        (E): Linear(in_features=60, out_features=60, bias=True)
+        (C): Linear(in_features=60, out_features=60, bias=True)
+        (bn_node): BatchNorm1d(60, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (bn_edge): BatchNorm1d(60, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      )
+    )
+  )
+  (MLP_layer): MLPReadout(
+    (FC_layers): ModuleList(
+      (0): Linear(in_features=60, out_features=30, bias=True)
+      (1): Linear(in_features=30, out_features=15, bias=True)
+      (2): Linear(in_features=15, out_features=2, bias=True)
+    )
+  )
+)
+
+Total Parameters: 77627
+
+Trained on MVC
+
+
+                     FINAL RESULTS
+TEST ACCURACY: 0.9359
+TEST F1: 0.9495
+Total Time Taken: 0.5016 hrs
+
+

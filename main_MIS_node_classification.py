@@ -419,13 +419,57 @@ __test_config_dict__ = {
 def main():
 
     # load config file
-    config_path = __train_config_dict__['GAT']
-    train(config_path=config_path)
+    config_path = 'configs/MIS/MIS_EGT_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/MIS_GAT_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/MIS_GatedGCN_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/MIS_GCN_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/MIS_GIN_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/MIS_GMM_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/MIS_GraphSage_100k_train_base.json'
+    #train(config_path=config_path)
+
 
     # LOAD NEW CONFIG IF NEED TO
-    config_path = 'configs/MIS/test/MIS_PNA_100k_test_base.json'
+    config_path = 'configs/MIS/base/test/MIS_EGT_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GAT_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GatedGCN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GCN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GIN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GMM_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GraphSage_100k_test_90.json'
     #test(config_path=config_path)
 
 
-if __name__ == '__main__':
-    main()
+    # LOAD NEW CONFIG IF NEED TO
+    config_path = 'configs/MIS/base/test/MIS_EGT_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GAT_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GatedGCN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GCN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GIN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GMM_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_GraphSage_100k_test_90_dense.json'
+    #test(config_path=config_path)
+
+
+
+
+
+main()

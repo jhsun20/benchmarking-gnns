@@ -1,0 +1,41 @@
+Dataset: MVC,
+Model: GraphSage
+
+params={'seed': 'random', 'epochs': 50, 'print_epoch_interval': 1, 'max_time': 24, 'init_lr': 0.01, 'lr_reduce_factor': 0.1, 'lr_schedule_patience': 10, 'min_lr': 0.0001, 'weight_decay': 0.0005}
+
+net_params={'L': 4, 'batch_size': 64, 'hidden_dim': 80, 'out_dim': 80, 'batch_norm': True, 'dropout': 0.2, 'sage_aggregator': 'pool', 'residual': True, 'loss_weight': [1, 1], 'in_dim': 8, 'device': device(type='cuda'), 'n_classes': 2, 'edge_dim': 1, 'total_param': 82902}
+
+GraphSageNet(
+  (embedding_h): Linear(in_features=8, out_features=80, bias=True)
+  (layers): ModuleList(
+    (0-3): 4 x GraphSageLayer(
+      (batchnorm_h): BatchNorm1d(80, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (sageconv): SAGEConv(
+        (norm): BatchNorm1d(80, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (feat_drop): Dropout(p=0.2, inplace=False)
+        (fc_pool): Linear(in_features=80, out_features=80, bias=True)
+        (fc_neigh): Linear(in_features=80, out_features=80, bias=False)
+        (fc_self): Linear(in_features=80, out_features=80, bias=True)
+      )
+    )
+  )
+  (MLP_layer): MLPReadout(
+    (FC_layers): ModuleList(
+      (0): Linear(in_features=80, out_features=40, bias=True)
+      (1): Linear(in_features=40, out_features=20, bias=True)
+      (2): Linear(in_features=20, out_features=2, bias=True)
+    )
+  )
+)
+
+Total Parameters: 82902
+
+Trained on MVC
+
+
+                     FINAL RESULTS
+TEST ACCURACY: 0.9167
+TEST F1: 0.9351
+Total Time Taken: 0.4696 hrs
+
+

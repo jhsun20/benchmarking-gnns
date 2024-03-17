@@ -53,3 +53,4 @@ data/WikiCS/*.json
 
 scripts/StatisticalResults/cycles.ipynb
 scripts/StatisticalResults/wikics.ipynb
+/experiment_results/

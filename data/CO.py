@@ -73,6 +73,7 @@ class load_CODataSetDGL(torch.utils.data.Dataset):
                         temp_labels.append(0)
                 converted_labels_list.append(temp_labels)
 
+            #if self.split == "test":
             if self.split == "test" or self.split == "train" or self.split == "val":
                 self.graph_lists.append(g)
                 while len(converted_labels_list) < 100:
@@ -83,7 +84,8 @@ class load_CODataSetDGL(torch.utils.data.Dataset):
                 for labels in converted_labels_list:
                     self.graph_lists.append(g)
                     self.node_labels.append(labels)
-                    break # comment out if you want to include all solutions
+                    # comment out if you want to include all solutions
+                    # break
 
         print("Average objective value:", sum(obj_values)/len(obj_values))
 

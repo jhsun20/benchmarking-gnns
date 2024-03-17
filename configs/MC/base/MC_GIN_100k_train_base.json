@@ -1,0 +1,46 @@
+{
+    "setup": {
+        "gpu": {
+            "use": true,
+            "id": 0
+        },
+        "model": "GIN",
+        "train_dataset": "MC",
+        "val_dataset": "MC",
+        "test_dataset": "MC",
+        "out_dir": "out/MC_node_classification/",
+        "features": "basic"
+    },
+
+    "tunable_params": {
+        "init_lr": 0.01,
+        "lr_reduce_factor": 0.5,
+        "lr_schedule_patience": 10,
+        "min_lr": 0.0005,
+        "weight_decay": 0.0005
+    },
+
+    "params": {
+        "seed": "random",
+        "epochs": 1000,
+        "print_epoch_interval": 1,
+        "max_time": 24
+    },
+
+    "tunable_net_params": {
+        "batch_size": 64,
+        "batch_norm": true,
+        "dropout": 0.2,
+        "residual": true,
+        "loss_weight": [0.3, 2]
+    },
+
+    "net_params": {
+        "L": 4,
+        "hidden_dim": 105,
+        "out_dim": 105,
+        "apply_fn_layers": 2,
+        "learn_eps": true,
+        "aggr_type": "max"
+    }
+}

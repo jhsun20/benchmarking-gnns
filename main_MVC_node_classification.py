@@ -82,11 +82,6 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
 
     dataset_name = train_dataset.name
 
-    if model_name in ['GCN', 'GAT']:
-        if net_params['self_loop']:
-            train_dataset._add_self_loops()
-            # test_dataset._add_self_loops()
-
     root_log_dir, root_ckpt_dir, write_file_name, write_file_name_test, losses_dir = dirs
 
     log_dir = os.path.join(root_log_dir, "RUN_" + str(0))
@@ -126,8 +121,8 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
     # import train functions for all other GCNs
     from train.train_MVC_node_classification import train_epoch, train_epoch_all_optimal, evaluate_network, evaluate_network_all_optimal
 
-    # train_loader = DataLoader(train_dataset.dataset, batch_size=net_params['batch_size'], shuffle=True, collate_fn=train_dataset.collate)
-    # val_loader = DataLoader(val_dataset.dataset, batch_size=net_params['batch_size'], shuffle=False, collate_fn=train_dataset.collate)
+    #train_loader = DataLoader(train_dataset.dataset, batch_size=net_params['batch_size'], shuffle=True, collate_fn=train_dataset.collate)
+    #val_loader = DataLoader(val_dataset.dataset, batch_size=net_params['batch_size'], shuffle=False, collate_fn=train_dataset.collate)
     train_loader = DataLoader(train_dataset.dataset, batch_size=1, shuffle=True, collate_fn=train_dataset.collate)
     val_loader = DataLoader(val_dataset.dataset, batch_size=1, shuffle=False, collate_fn=train_dataset.collate)
 
@@ -137,12 +132,10 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
             t.set_description('Epoch %d' % epoch)
 
             start = time.time()
-            # epoch_train_loss, epoch_train_acc, epoch_train_f1, optimizer = train_epoch(model, optimizer, device, train_loader, epoch)
-            epoch_train_loss, epoch_train_acc, epoch_train_f1, optimizer = train_epoch_all_optimal(model, optimizer,
-                                                                                                   device, train_loader,
-                                                                                                   epoch, net_params[
-                                                                                                       'batch_size'])
+            #epoch_train_loss, epoch_train_acc, epoch_train_f1, optimizer = train_epoch(model, optimizer, device, train_loader, epoch)
+            epoch_train_loss, epoch_train_acc, epoch_train_f1, optimizer = train_epoch_all_optimal(model, optimizer, device, train_loader, epoch, net_params['batch_size'])
 
+            #epoch_val_loss, epoch_val_acc, epoch_val_f1 = evaluate_network(model, device, val_loader)
             epoch_val_loss, epoch_val_acc, epoch_val_f1 = evaluate_network_all_optimal(model, device, val_loader)
 
             epoch_train_losses.append(epoch_train_loss)
@@ -195,6 +188,8 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
 
     _, val_acc, val_f1 = evaluate_network_all_optimal(model, device, val_loader)
     _, train_acc, train_f1 = evaluate_network_all_optimal(model, device, train_loader)
+    # _, val_acc, val_f1 = evaluate_network(model, device, val_loader)
+    # _, train_acc, train_f1 = evaluate_network(model, device, train_loader)
     print("Val Accuracy: {:.4f}".format(val_acc))
     print("Train Accuracy: {:.4f}".format(train_acc))
     print("Val F1: {:.4f}".format(val_f1))
@@ -252,10 +247,6 @@ def test_pipeline(model_name, test_dataset, weights_path, params, net_params, se
     start0 = time.time()
 
     dataset_name = test_dataset.name
-
-    if model_name in ['GCN', 'GAT']:
-        if net_params['self_loop']:
-            test_dataset._add_self_loops()
 
     write_file_name = dirs
     device = net_params['device']
@@ -418,13 +409,55 @@ __test_config_dict__ = {
 
 def main():
     # load config file
-    config_path = __train_config_dict__['GAT']
+    config_path = 'configs/MVC/base/MVC_EGT_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MVC/base/MVC_GAT_100k_train_base.json'
     train(config_path=config_path)
+    config_path = 'configs/MVC/base/MVC_GatedGCN_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MVC/base/MVC_GCN_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MVC/base/MVC_GIN_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MVC/base/MVC_GMM_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MVC/base/MVC_GraphSage_100k_train_base.json'
+    #train(config_path=config_path)
+
 
     # LOAD NEW CONFIG IF NEED TO
-    config_path = 'configs/MVC/test/MVC_PNA_100k_test_base.json'
+    config_path = 'configs/MVC/base/test/MVC_EGT_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GAT_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GatedGCN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GCN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GIN_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GMM_100k_test_90.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GraphSage_100k_test_90.json'
     #test(config_path=config_path)
 
 
-if __name__ == '__main__':
-    main()
+    # LOAD NEW CONFIG IF NEED TO
+    config_path = 'configs/MVC/base/test/MVC_EGT_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GAT_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GatedGCN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GCN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GIN_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GMM_100k_test_90_dense.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MVC/base/test/MVC_GraphSage_100k_test_90_dense.json'
+    #test(config_path=config_path)
+
+
+
+main()

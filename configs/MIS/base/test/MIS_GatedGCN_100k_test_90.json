@@ -1,0 +1,14 @@
+{
+    "setup": {
+        "gpu": {
+            "use": true,
+            "id": 0
+        },
+        "model": "GatedGCN",
+        "train_dataset": "MIS",
+        "test_dataset": "MIS_90_0.2",
+        "out_dir": "out/MIS_node_classification/",
+        "saved_weights": "saved_models/MIS/base/GatedGCN/weights.pkl",
+        "saved_config" : "saved_models/MIS/base/GatedGCN/MIS_GatedGCN_100k_train_base.json"
+    }
+}

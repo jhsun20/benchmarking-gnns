@@ -1,0 +1,14 @@
+{
+    "setup": {
+        "gpu": {
+            "use": true,
+            "id": 0
+        },
+        "model": "GCN",
+        "train_dataset": "MC",
+        "test_dataset": "MC_90_0.6",
+        "out_dir": "out/MC_node_classification/",
+        "saved_weights": "saved_models/MC/base/GCN/weights.pkl",
+        "saved_config" : "saved_models/MC/base/GCN/MC_GCN_100k_train_base.json"
+    }
+}

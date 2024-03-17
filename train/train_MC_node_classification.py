@@ -158,6 +158,7 @@ def evaluate_network_all_optimal(model, device, data_loader):
     with torch.no_grad():
         for iter, (batch_graphs, batch_labels_list) in enumerate(data_loader):
             batch_graphs = batch_graphs.to(device)
+            graph_size = batch_graphs.number_of_nodes()
             batch_x = batch_graphs.ndata['feat'].to(device)
             batch_e = batch_graphs.edata['feat'].to(device)
             batch_labels_list = batch_labels_list.to(device)
@@ -169,7 +170,7 @@ def evaluate_network_all_optimal(model, device, data_loader):
                 current_acc = 0
                 current_loss = 1000
                 current_f1 = 0
-                batch_scores = batch_scores.view(30, 2)
+                batch_scores = batch_scores.view(graph_size, 2)
                 y_true = labels_list[0].cpu().numpy()
                 y_pred = batch_scores.argmax(dim=1).cpu().numpy()
                 predicted_obj.append([np.sum(y_true), np.sum(y_pred)])
