@@ -4,10 +4,10 @@
 from data.CO import CODataset
 
 
-def LoadData(data_dir, name, split, features):
+def LoadData(data_dir, name, split, features, labels="all"):
     """
         This function is called in the main.py file 
         returns:
         ; dataset object
     """
-    return CODataset(data_dir, name, split, features)
+    return CODataset(data_dir, name, split, features, labels)

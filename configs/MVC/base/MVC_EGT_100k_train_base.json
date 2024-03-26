@@ -8,6 +8,8 @@
         "train_dataset": "MVC",
         "val_dataset": "MVC",
         "test_dataset": "MVC",
+        "beam_width": 20,
+        "time_limit": 100,
         "out_dir": "out/MVC_node_classification/",
         "features": "basic"
     },
@@ -28,7 +30,7 @@
     },
 
     "tunable_net_params": {
-        "batch_size": 32,
+        "batch_size": 64,
         "dropout": 0.2,
         "attn_drop": 0.2,
         "loss_weight": [1, 1]

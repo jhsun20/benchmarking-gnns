@@ -8,6 +8,8 @@
         "train_dataset": "MVC",
         "val_dataset": "MVC",
         "test_dataset" : "MVC",
+        "beam_width": 20,
+        "time_limit": 100,
         "out_dir": "out/MVC_node_classification/",
         "features": "basic"
     },

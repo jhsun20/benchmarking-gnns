@@ -8,6 +8,8 @@
         "train_dataset": "MC",
         "test_dataset": "MC_90_0.2",
         "out_dir": "out/MC_node_classification/",
+        "beam_width": 20,
+        "time_limit": 100,
         "saved_weights": "saved_models/MC/base/GMM/weights.pkl",
         "saved_config" : "saved_models/MC/base/GMM/MC_GMM_100k_train_base.json"
     }

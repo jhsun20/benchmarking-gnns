@@ -7,7 +7,9 @@
         "model": "EGT",
         "train_dataset": "MC",
         "val_dataset": "MC",
-        "test_dataset": "MC",
+        "test_dataset": "none",
+        "beam_width": 1,
+        "time_limit": 60,
         "out_dir": "out/MC_node_classification/",
         "features": "basic"
     },
@@ -27,14 +29,6 @@
         "max_time": 24
     },
 
-    "tunable_net_params": {
-        "batch_size": 32,
-        "dropout": 0.2,
-        "attn_drop": 0.2,
-        "loss_weight": [0.3, 2]
-
-    },
-
     "net_params": {
         "L": 4,
         "node_hidden_dim": 60,
@@ -43,5 +37,14 @@
         "edge_update": false,
         "graph_size": 30,
         "num_virtual_nodes": 0
+    },
+    "tunable_net_params": {
+        "batch_size": 32,
+        "dropout": 0.2,
+        "attn_drop": 0.2,
+        "loss_weight": [
+            1.0,
+            2.6316806809160993
+        ]
     }
 }

@@ -7,6 +7,8 @@ import torch.nn as nn
 import math
 import dgl
 import numpy as np
+import time
+from tqdm import tqdm
 
 from train.metrics import accuracy_CO as accuracy, binary_f1_score as f1_score
 
@@ -194,32 +196,3 @@ def evaluate_network_all_optimal(model, device, data_loader):
         epoch_test_f1 /= (iter + 1)
     #print('\n', predicted_obj)
     return epoch_test_loss, epoch_test_acc, epoch_test_f1
-
-
-def solution_construction(model, device, data_loader):
-    model.eval()
-    pred_objs = []
-    opt_objs = []
-    opt_gaps = []
-    with torch.no_grad():
-        for iter, (batch_graphs, batch_labels_list) in enumerate(data_loader):
-            batch_graphs = batch_graphs.to(device)
-            nx_graph = batch_graphs.to_networkx
-            batch_x = batch_graphs.ndata['feat'].to(device)
-            batch_e = batch_graphs.edata['feat'].to(device)
-            # get optimal obj value
-            label = batch_labels_list[0][0].cpu().numpy()
-            opt_obj = np.sum(label)
-            batch_scores = model.forward(batch_graphs, batch_x, batch_e)
-            scores = nn.Softmax(batch_scores)
-            scores = scores.detach().cpu().numpy()
-            probs = scores[:, 1]
-            pred_sol = heuristic_search(nx_graph, probs, problem="MVC", time_limit=10)
-            pred_objs.append(pred_sol)
-            opt_objs.append(opt_obj)
-            opt_gaps.append((opt_obj - pred_sol)/pred_sol)
-    return pred_objs, opt_objs, opt_gaps
-
-
-def heuristic_search(nxgraph, probabilities, problem, time_limit=10):
-    return 2
