@@ -1,0 +1,17 @@
+{
+    "setup": {
+        "gpu": {
+            "use": true,
+            "id": 0
+        },
+        "model": "EGT",
+        "train_dataset": "MIS",
+        "test_dataset": "MIS_30_0.6",
+        "out_dir": "out/MIS_node_classification/",
+        "beam_width": 1,
+        "time_limit": 60,
+        "saved_weights": "saved_models/MIS/one/EGT/weights.pkl",
+        "saved_config" : "saved_models/MIS/one/EGT/MIS_EGT_100k_train_one.json"
+    }
+}
+

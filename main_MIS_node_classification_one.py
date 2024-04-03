@@ -404,81 +404,81 @@ def test(config_path):
 
 def main():
     # load config file
-    config_path = 'configs/MIS/base/MIS_EGT_100k_train_base.json'
+    config_path = 'configs/MIS/base/MIS_EGT_100k_train_one.json'
     #train(config_path=config_path)
-    config_path = 'configs/MIS/base/MIS_GAT_100k_train_base.json'
+    config_path = 'configs/MIS/base/MIS_GAT_100k_train_one.json'
     #train(config_path=config_path)
-    config_path = 'configs/MIS/base/MIS_GatedGCN_100k_train_one.json'
-    train(config_path=config_path)
-    config_path = 'configs/MIS/base/MIS_GCN_100k_train_base.json'
-    train(config_path=config_path)
-    config_path = 'configs/MIS/base/MIS_GIN_100k_train_base.json'
-    train(config_path=config_path)
-    config_path = 'configs/MIS/base/MIS_GMM_100k_train_base.json'
-    train(config_path=config_path)
-    config_path = 'configs/MIS/base/MIS_GraphSage_100k_train_base.json'
-    train(config_path=config_path)
+    config_path = 'configs/MIS/base/MIS_GatedGCN_100k_one.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/base/MIS_GCN_100k_train_one.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/base/MIS_GIN_100k_train_one.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/base/MIS_GMM_100k_train_one.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/base/MIS_GraphSage_100k_train_one.json'
+    #train(config_path=config_path)
 
 
     # TESTING
-    config_path = 'configs/MIS/base/test/MIS_EGT_100k_test_30_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_EGT_100k_test_30_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GAT_100k_test_30_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GAT_100k_test_30_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GatedGCN_100k_test_30_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GatedGCN_100k_test_30_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GCN_100k_test_30_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GCN_100k_test_30_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GIN_100k_test_30_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GIN_100k_test_30_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GMM_100k_test_30_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GMM_100k_test_30_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GraphSage_100k_test_30_0.6.json'
-    #test(config_path=config_path)
-
-    config_path = 'configs/MIS/base/test/MIS_EGT_100k_test_90_0.2.json'
-    #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GAT_100k_test_90_0.2.json'
-    #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GatedGCN_100k_test_90_0.2.json'
-    #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GCN_100k_test_90_0.2.json'
-    #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GIN_100k_test_90_0.2.json'
-    #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GMM_100k_test_90_0.2.json'
-    #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GraphSage_100k_test_90_0.2.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GraphSage_100k_test_30_0.6_one.json'
     #test(config_path=config_path)
 
-    config_path = 'configs/MIS/base/test/MIS_EGT_100k_test_90_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_EGT_100k_test_90_0.2_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GAT_100k_test_90_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GAT_100k_test_90_0.2_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GatedGCN_100k_test_90_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GatedGCN_100k_test_90_0.2_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GCN_100k_test_90_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GCN_100k_test_90_0.2_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GIN_100k_test_90_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GIN_100k_test_90_0.2_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GMM_100k_test_90_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GMM_100k_test_90_0.2_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GraphSage_100k_test_90_0.6.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GraphSage_100k_test_90_0.2_one.json'
     #test(config_path=config_path)
 
-    config_path = 'configs/MIS/base/test/MIS_EGT_100k_test_180_0.5.json'
+    config_path = 'configs/MIS/base/test/one/MIS_EGT_100k_test_90_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GAT_100k_test_180_0.5.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GAT_100k_test_90_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GatedGCN_100k_test_180_0.5.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GatedGCN_100k_test_90_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GCN_100k_test_180_0.5.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GCN_100k_test_90_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GIN_100k_test_180_0.5.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GIN_100k_test_90_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GMM_100k_test_180_0.5.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GMM_100k_test_90_0.6_one.json'
     #test(config_path=config_path)
-    config_path = 'configs/MIS/base/test/MIS_GraphSage_100k_test_180_0.5.json'
+    config_path = 'configs/MIS/base/test/one/MIS_GraphSage_100k_test_90_0.6_one.json'
+    #test(config_path=config_path)
+
+    config_path = 'configs/MIS/base/test/one/MIS_EGT_100k_test_180_0.5_one.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/one/MIS_GAT_100k_test_180_0.5_one.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/one/MIS_GatedGCN_100k_test_180_0.5_one.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/one/MIS_GCN_100k_test_180_0.5_one.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/one/MIS_GIN_100k_test_180_0.5_one.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/one/MIS_GMM_100k_test_180_0.5_one.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/one/MIS_GraphSage_100k_test_180_0.5_one.json'
     #test(config_path=config_path)
 
 main()

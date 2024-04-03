@@ -404,19 +404,23 @@ def test(config_path):
 
 def main():
     # load config file
+    config_path = 'configs/MIS/base/ablation/MIS_GatedGCN_500k_train_deep.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/base/ablation/MIS_GatedGCN_500k_train_wide.json'
+    #train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_EGT_100k_train_base.json'
-    train(config_path=config_path)
+    #train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GAT_100k_train_base.json'
-    train(config_path=config_path)
+    #train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GatedGCN_100k_train_base.json'
-    train(config_path=config_path)
+    #train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GCN_100k_train_base.json'
-    train(config_path=config_path)
+    #train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GIN_100k_train_base.json'
-    train(config_path=config_path)
+    #train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GMM_100k_train_base.json'
-    train(config_path=config_path)
-    config_path = 'configs/MIS/base/MIS_GraphSage_100k_train_base.json'
+    #train(config_path=config_path)
+    config_path = 'configs/MIS/base/MIS_GraphSage_100k_train_one.json'
     train(config_path=config_path)
 
 
@@ -479,6 +483,72 @@ def main():
     config_path = 'configs/MIS/base/test/MIS_GMM_100k_test_180_0.5.json'
     #test(config_path=config_path)
     config_path = 'configs/MIS/base/test/MIS_GraphSage_100k_test_180_0.5.json'
+    #test(config_path=config_path)
+
+    # MLP and ablation studies
+    config_path = 'configs/MIS/base/test/MIS_MLP_100k_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_MLP_100k_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_MLP_100k_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/base/test/MIS_MLP_100k_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GatedGCN_500k_deep_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GatedGCN_500k_deep_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GatedGCN_500k_deep_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GatedGCN_500k_deep_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GatedGCN_500k_wide_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GatedGCN_500k_wide_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GatedGCN_500k_wide_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GatedGCN_500k_wide_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GAT_100k_beam5_test.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GAT_100k_beam5_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GAT_100k_beam5_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GAT_100k_beam5_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GAT_100k_beam5_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GAT_100k_beam10_test.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GAT_100k_beam10_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GAT_100k_beam10_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GAT_100k_beam10_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_GAT_100k_beam10_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_MLP_beam5_test.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_MLP_beam5_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_MLP_beam5_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_MLP_beam5_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_MLP_beam5_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_MLP_beam10_test.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_MLP_beam10_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_MLP_beam10_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_MLP_beam10_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MIS/ablation/test/MIS_MLP_beam10_test_180_0.5.json'
     #test(config_path=config_path)
 
 main()

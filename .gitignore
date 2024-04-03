@@ -6,10 +6,10 @@ out/
 
 gmail.py
 
-#SBM datasets
+#SBM MIS_graphs
 data/SBMs/*.pkl
 
-#Superpixels datasets
+#Superpixels MIS_graphs
 data/superpixels/*.pkl
 data/superpixels/*.zip
 PATH/

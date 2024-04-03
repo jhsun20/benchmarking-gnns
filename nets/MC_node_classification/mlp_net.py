@@ -18,6 +18,7 @@ class MLPNet(nn.Module):
         in_feat_dropout = net_params['in_feat_dropout']
         dropout = net_params['dropout']
         n_layers = net_params['L']
+        self.loss_weight = net_params['loss_weight']
         self.gated = net_params['gated']
         self.n_classes = n_classes
         self.device = net_params['device']
