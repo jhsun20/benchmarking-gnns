@@ -128,7 +128,6 @@ def evaluate_network(model, device, data_loader):
             batch_graphs = batch_graphs.to(device)
             batch_x = batch_graphs.ndata['feat'].to(device)
             batch_e = batch_graphs.edata['feat'].to(device)
-            #batch_x = batch_x.flatten(0)
             batch_labels = batch_labels.to(device)
             try:
                 batch_pos_enc = batch_graphs.ndata['pos_enc'].to(device)
@@ -154,6 +153,7 @@ def evaluate_network_all_optimal(model, device, data_loader):
     epoch_test_loss = 0
     epoch_test_acc = 0
     epoch_test_f1 = 0
+    epoch_f1s = []
     predicted_obj = []
     with torch.no_grad():
         for iter, (batch_graphs, batch_labels_list) in enumerate(data_loader):
@@ -182,16 +182,17 @@ def evaluate_network_all_optimal(model, device, data_loader):
                     acc = accuracy(batch_scores, labels)
                     f1 = f1_score(batch_scores, labels)
                     # MAYBE USE LOWEST LOSS INSTEAD OF LOWEST F1?
-                    if f1 >= current_f1:
+                    if acc >= current_acc:
                         current_f1 = f1
                         current_loss = loss
                         current_acc = acc
                 epoch_test_loss += current_loss.detach().item()
                 epoch_test_acc += current_acc
                 epoch_test_f1 += current_f1
+                epoch_f1s.append(current_f1)
         epoch_test_loss /= (iter + 1)
         epoch_test_acc /= (iter + 1)
         epoch_test_f1 /= (iter + 1)
     #print('\n', predicted_obj)
-    return epoch_test_loss, epoch_test_acc, epoch_test_f1
+    return epoch_test_loss, epoch_test_acc, epoch_test_f1, epoch_f1s
 

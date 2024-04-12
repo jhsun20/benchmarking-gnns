@@ -404,23 +404,21 @@ def test(config_path):
 
 def main():
     # load config file
-    config_path = 'configs/MIS/base/ablation/MIS_GatedGCN_500k_train_deep.json'
-    #train(config_path=config_path)
-    config_path = 'configs/MIS/base/ablation/MIS_GatedGCN_500k_train_wide.json'
-    #train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_EGT_100k_train_base.json'
-    #train(config_path=config_path)
+    train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GAT_100k_train_base.json'
-    #train(config_path=config_path)
+    train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GatedGCN_100k_train_base.json'
-    #train(config_path=config_path)
+    train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GCN_100k_train_base.json'
-    #train(config_path=config_path)
+    train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GIN_100k_train_base.json'
-    #train(config_path=config_path)
+    train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GMM_100k_train_base.json'
-    #train(config_path=config_path)
+    train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GraphSage_100k_train_one.json'
+    train(config_path=config_path)
+    config_path = 'configs/MIS/base/MIS_MLP_train_base.json'
     train(config_path=config_path)
 
 

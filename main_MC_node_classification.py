@@ -132,14 +132,14 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
             t.set_description('Epoch %d' % epoch)
 
             start = time.time()
-            epoch_train_loss, epoch_train_acc, epoch_train_f1, optimizer = train_epoch(model, optimizer, device, train_loader, epoch)
+            #epoch_train_loss, epoch_train_acc, epoch_train_f1, optimizer = train_epoch(model, optimizer, device, train_loader, epoch)
             epoch_train_loss, epoch_train_acc, epoch_train_f1, optimizer = train_epoch_all_optimal(model, optimizer, device, train_loader, epoch, net_params['batch_size'])
 
             #epoch_val_loss, epoch_val_acc, epoch_val_f1 = evaluate_network(model, device, val_loader)
-            epoch_val_loss, epoch_val_acc, epoch_val_f1 = evaluate_network_all_optimal(model, device, val_loader)
+            epoch_val_loss, epoch_val_acc, epoch_val_f1, _ = evaluate_network_all_optimal(model, device, val_loader)
 
-            train_pred_objs, train_opt_objs, train_opt_gaps = solution_construction(model, device, train_loader, beam_width=beam_width, time_limit=time_limit)
-            train_average_gap = sum(train_opt_gaps) / len(train_opt_gaps)
+            #train_pred_objs, train_opt_objs, train_opt_gaps = solution_construction(model, device, train_loader, beam_width=beam_width, time_limit=time_limit)
+            #train_average_gap = sum(train_opt_gaps) / len(train_opt_gaps)
             val_pred_objs, val_opt_objs, val_opt_gaps = solution_construction(model, device, train_loader, beam_width=beam_width, time_limit=time_limit)
             val_average_gap = sum(val_opt_gaps) / len(val_opt_gaps)
 
@@ -149,7 +149,7 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
             epoch_val_accs.append(epoch_val_acc)
             epoch_train_f1s.append(epoch_train_f1)
             epoch_val_f1s.append(epoch_val_f1)
-            epoch_train_gaps.append(train_average_gap)
+            #epoch_train_gaps.append(train_average_gap)
             epoch_val_gaps.append(val_average_gap)
 
             writer.add_scalar('train/_loss', epoch_train_loss, epoch)
@@ -158,15 +158,15 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
             writer.add_scalar('val/_acc', epoch_val_acc, epoch)
             writer.add_scalar('train/_f1', epoch_train_f1, epoch)
             writer.add_scalar('val/_f1', epoch_val_f1, epoch)
-            writer.add_scalar('train/_average_gap', train_average_gap, epoch)
+            #writer.add_scalar('train/_average_gap', train_average_gap, epoch)
             writer.add_scalar('val/_average_gap', val_average_gap, epoch)
             writer.add_scalar('learning_rate', optimizer.param_groups[0]['lr'], epoch)
 
             t.set_postfix(time=time.time() - start, lr=optimizer.param_groups[0]['lr'],
                           train_loss=epoch_train_loss, val_loss=epoch_val_loss,
                           train_acc=epoch_train_acc, val_acc=epoch_val_acc,
-                          train_f1=epoch_train_f1, val_f1=epoch_val_f1
-                          ,train_average_gap=train_average_gap, val_average_gap=val_average_gap
+                          train_f1=epoch_train_f1, val_f1=epoch_val_f1,
+                          val_average_gap=val_average_gap
                           )
 
             per_epoch_time.append(time.time() - start)
@@ -196,17 +196,19 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
                 print("Max_time for training elapsed {:.2f} hours, so stopping".format(params['max_time']))
                 break
 
-    _, val_acc, val_f1 = evaluate_network_all_optimal(model, device, val_loader)
-    _, train_acc, train_f1 = evaluate_network_all_optimal(model, device, train_loader)
-    train_pred_objs, train_opt_objs, train_opt_gaps = solution_construction(model, device, train_loader, beam_width=beam_width, time_limit=time_limit)
-    train_average_gap = sum(train_opt_gaps) / len(train_opt_gaps)
+    _, val_acc, val_f1, _ = evaluate_network_all_optimal(model, device, val_loader)
+    _, train_acc, train_f1, _ = evaluate_network_all_optimal(model, device, train_loader)
+    #_, val_acc, val_f1= evaluate_network(model, device, val_loader)
+    #_, train_acc, train_f1= evaluate_network(model, device, train_loader)
+    # train_pred_objs, train_opt_objs, train_opt_gaps = solution_construction(model, device, train_loader, beam_width=beam_width, time_limit=time_limit)
+    # train_average_gap = sum(train_opt_gaps) / len(train_opt_gaps)
     val_pred_objs, val_opt_objs, val_opt_gaps = solution_construction(model, device, train_loader, beam_width=beam_width, time_limit=time_limit)
     val_average_gap = sum(val_opt_gaps) / len(val_opt_gaps)
     print("Val Accuracy: {:.4f}".format(val_acc))
     print("Train Accuracy: {:.4f}".format(train_acc))
     print("Val F1: {:.4f}".format(val_f1))
     print("Train F1: {:.4f}".format(train_f1))
-    print("Train Average Gap: {:.4f}".format(train_average_gap))
+    # print("Train Average Gap: {:.4f}".format(train_average_gap))
     print("Val Average Gap: {:.4f}".format(val_average_gap))
     print("Convergence Time (Epochs): {:.4f}".format(epoch))
     print("TOTAL TIME TAKEN: {:.4f}s".format(time.time() - start0))
@@ -219,15 +221,15 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
     """
     with open(write_file_name + '.txt', 'w') as f:
         f.write("""Dataset: {},\nModel: {}\n\nparams={}\n\nnet_params={}\n\n{}\n\nTotal Parameters: {}\n\n
-    FINAL RESULTS\nVAL ACCURACY: {:.4f}\nTRAIN ACCURACY: {:.4f}\nVAL F1: {:.4f}\nTRAIN F1: {:.4f}\nVAL GAP: {:.4f}\nTRAIN_GAP: {:.4f}\n\n
+    FINAL RESULTS\nVAL ACCURACY: {:.4f}\nTRAIN ACCURACY: {:.4f}\nVAL F1: {:.4f}\nTRAIN F1: {:.4f}\nVAL GAP: {:.4f}\n\n
     Convergence Time (Epochs): {:.4f}\nTotal Time Taken: {:.4f} hrs\nAverage Time Per Epoch: {:.4f} s\n\n\n""" \
                 .format(dataset_name, model_name, params, net_params, model, net_params['total_param'],
-                        val_acc, train_acc, val_f1, train_f1, val_average_gap, train_average_gap, epoch, (time.time() - start0) / 3600,
+                        val_acc, train_acc, val_f1, train_f1, val_average_gap, epoch, (time.time() - start0) / 3600,
                         np.mean(per_epoch_time)))
 
     os.makedirs(losses_dir, exist_ok=True)
     with open(losses_dir + 'train.json', 'w+') as output_file:
-        json.dump([epoch_train_f1s, epoch_train_losses, epoch_train_gaps], output_file, indent=2)
+        json.dump([epoch_train_f1s, epoch_train_losses], output_file, indent=2)
     with open(losses_dir + 'val.json', 'w+') as output_file:
         json.dump([epoch_val_f1s, epoch_val_losses, epoch_val_gaps], output_file, indent=2)
 
@@ -239,7 +241,7 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
         print("opt_objs: ", opt_objs)
         print("opt_gaps: ", opt_gaps)
         average_gap = sum(opt_gaps) / len(opt_gaps)
-        _, test_acc, test_f1 = evaluate_network_all_optimal(model, device, test_loader)
+        _, test_acc, test_f1, test_f1_list = evaluate_network_all_optimal(model, device, test_loader)
         print("Test Accuracy: {:.4f}".format(test_acc))
         print("Test F1: {:.4f}".format(test_f1))
         print("Average Test Gap: {:.4f}".format(average_gap))
@@ -254,6 +256,9 @@ def train_test_pipeline(model_name, train_dataset, val_dataset, params, net_para
                     .format(dataset_name, model_name, params, net_params, model, net_params['total_param'],
                             setup['train_dataset'],
                             test_acc, test_f1, average_gap, (time.time() - start0) / 3600))
+
+        with open(write_file_name_test + '_f1scores.json', 'w+') as output_file:
+            json.dump([test_f1_list, opt_gaps], output_file, indent=2)
 
 
 def test_pipeline(model_name, test_dataset, weights_path, params, net_params, setup, dirs):
@@ -283,7 +288,7 @@ def test_pipeline(model_name, test_dataset, weights_path, params, net_params, se
     print("opt_gaps: ", opt_gaps)
     average_gap = sum(opt_gaps) / len(opt_gaps)
 
-    _, test_acc, test_f1 = evaluate_network_all_optimal(model, device, test_loader)
+    _, test_acc, test_f1, test_f1_list = evaluate_network_all_optimal(model, device, test_loader)
     print("Test Accuracy: {:.4f}".format(test_acc))
     print("Test F1: {:.4f}".format(test_f1))
     print("AVERAGE GAP: {:.4f}".format(average_gap))
@@ -298,6 +303,9 @@ def test_pipeline(model_name, test_dataset, weights_path, params, net_params, se
                 .format(dataset_name, model_name, params, net_params, model, net_params['total_param'],
                         setup['train_dataset'],
                         test_acc, test_f1, average_gap, (time.time() - start0) / 3600))
+
+    with open(write_file_name + '_f1scores.json', 'w+') as output_file:
+        json.dump([test_f1_list, opt_gaps], output_file, indent=2)
 
 
 def train(config_path):
@@ -335,6 +343,8 @@ def train(config_path):
     if config['setup']['test_dataset'] != "none":
         test_dataset = LoadData(data_dir='data/CO/test', name=config['setup']['test_dataset'], split='test',
                                 features=features)
+    else:
+        test_dataset = None
     print("sample graph node features")
     sample = train_dataset.dataset[0][0].ndata['feat']
     print(sample)
@@ -407,41 +417,136 @@ def main():
     config_path = 'configs/MC/base/MC_GMM_100k_train_base.json'
     #train(config_path=config_path)
     config_path = 'configs/MC/base/MC_GraphSage_100k_train_base.json'
-    #train(config_path=config_path)
+    train(config_path=config_path)
+    config_path = 'configs/MC/base/MC_MLP_train_base.json'
+    train(config_path=config_path)
 
 
-    # LOAD NEW CONFIG IF NEED TO
-    config_path = 'configs/MC/base/test/MC_EGT_100k_test_90.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GAT_100k_test_90.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GatedGCN_100k_test_90.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GCN_100k_test_90.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GIN_100k_test_90.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GMM_100k_test_90.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GraphSage_100k_test_90.json'
-    test(config_path=config_path)
+    # TESTING
+    config_path = 'configs/MC/base/test/MC_EGT_100k_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GAT_100k_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GatedGCN_100k_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GCN_100k_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GIN_100k_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GMM_100k_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GraphSage_100k_test_30_0.6.json'
+    #test(config_path=config_path)
 
+    config_path = 'configs/MC/base/test/MC_EGT_100k_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GAT_100k_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GatedGCN_100k_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GCN_100k_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GIN_100k_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GMM_100k_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GraphSage_100k_test_90_0.2.json'
+    #test(config_path=config_path)
 
-    # LOAD NEW CONFIG IF NEED TO
-    config_path = 'configs/MC/base/test/MC_EGT_100k_test_90_dense.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GAT_100k_test_90_dense.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GatedGCN_100k_test_90_dense.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GCN_100k_test_90_dense.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GIN_100k_test_90_dense.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GMM_100k_test_90_dense.json'
-    test(config_path=config_path)
-    config_path = 'configs/MC/base/test/MC_GraphSage_100k_test_90_dense.json'
-    test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_EGT_100k_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GAT_100k_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GatedGCN_100k_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GCN_100k_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GIN_100k_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GMM_100k_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GraphSage_100k_test_90_0.6.json'
+    #test(config_path=config_path)
 
+    config_path = 'configs/MC/base/test/MC_EGT_100k_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GAT_100k_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GatedGCN_100k_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GCN_100k_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GIN_100k_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GMM_100k_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_GraphSage_100k_test_180_0.5.json'
+    #test(config_path=config_path)
+
+    # MLP and ablation studies
+    config_path = 'configs/MC/base/test/MC_MLP_100k_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_MLP_100k_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_MLP_100k_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/base/test/MC_MLP_100k_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GatedGCN_500k_deep_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GatedGCN_500k_deep_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GatedGCN_500k_deep_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GatedGCN_500k_deep_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GatedGCN_500k_wide_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GatedGCN_500k_wide_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GatedGCN_500k_wide_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GatedGCN_500k_wide_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GAT_100k_beam5_test.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GAT_100k_beam5_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GAT_100k_beam5_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GAT_100k_beam5_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GAT_100k_beam5_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GAT_100k_beam10_test.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GAT_100k_beam10_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GAT_100k_beam10_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GAT_100k_beam10_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_GAT_100k_beam10_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_MLP_beam5_test.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_MLP_beam5_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_MLP_beam5_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_MLP_beam5_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_MLP_beam5_test_180_0.5.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_MLP_beam10_test.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_MLP_beam10_test_30_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_MLP_beam10_test_90_0.2.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_MLP_beam10_test_90_0.6.json'
+    #test(config_path=config_path)
+    config_path = 'configs/MC/ablation/test/MC_MLP_beam10_test_180_0.5.json'
+    #test(config_path=config_path)
 
 main()

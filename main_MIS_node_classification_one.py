@@ -407,7 +407,7 @@ def main():
     config_path = 'configs/MIS/base/MIS_EGT_100k_train_one.json'
     #train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GAT_100k_train_one.json'
-    #train(config_path=config_path)
+    train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GatedGCN_100k_one.json'
     #train(config_path=config_path)
     config_path = 'configs/MIS/base/MIS_GCN_100k_train_one.json'
