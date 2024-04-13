@@ -1,0 +1,16 @@
+{
+    "setup": {
+        "gpu": {
+            "use": true,
+            "id": 0
+        },
+        "model": "MLP",
+        "train_dataset": "MC",
+        "test_dataset": "MC_30_0.6",
+        "out_dir": "out/MC_node_classification/",
+        "beam_width": 1,
+        "time_limit": 60,
+        "saved_weights": "saved_models/MC/base/MLP/weights.pkl",
+        "saved_config" : "saved_models/MC/base/MLP/MC_MLP_train_base.json"
+    }
+}
