@@ -8,6 +8,8 @@
         "train_dataset": "MC",
         "val_dataset": "MC",
         "test_dataset": "MC",
+        "beam_width": 1,
+        "time_limit": 60,
         "out_dir": "out/MC_node_classification/",
         "features": "basic"
     },
@@ -22,17 +24,9 @@
 
     "params": {
         "seed": "random",
-        "epochs": 1000,
+        "epochs": 100,
         "print_epoch_interval": 1,
         "max_time": 24
-    },
-
-    "tunable_net_params": {
-        "batch_size": 32,
-        "batch_norm": true,
-        "dropout": 0.2,
-        "residual": true,
-        "loss_weight": [0.3, 2]
     },
 
     "net_params": {
@@ -42,5 +36,15 @@
         "aggr_type": "max",
         "pseudo_dim": 3,
         "kernel": 2
+    },
+    "tunable_net_params": {
+        "batch_size": 32,
+        "batch_norm": true,
+        "dropout": 0.2,
+        "residual": true,
+        "loss_weight": [
+            1.0,
+            5.7819723464972
+        ]
     }
 }

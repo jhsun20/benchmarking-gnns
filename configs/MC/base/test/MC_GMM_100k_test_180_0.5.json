@@ -1,0 +1,17 @@
+{
+    "setup": {
+        "gpu": {
+            "use": true,
+            "id": 0
+        },
+        "model": "GMM",
+        "train_dataset": "MC",
+        "test_dataset": "MC_180_0.5",
+        "out_dir": "out/MC_node_classification/",
+        "beam_width": 1,
+        "time_limit": 60,
+        "saved_weights": "saved_models/MC/base/GMM/weights.pkl",
+        "saved_config" : "saved_models/MC/base/GMM/MC_GMM_100k_train_base.json"
+    }
+}
+

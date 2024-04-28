@@ -8,6 +8,8 @@
         "train_dataset": "MVC",
         "test_dataset": "MVC_90_0.2",
         "out_dir": "out/MVC_node_classification/",
+        "beam_width": 5,
+        "time_limit": 100,
         "saved_weights": "saved_models/MVC/base/GraphSage/weights.pkl",
         "saved_config" : "saved_models/MVC/base/GraphSage/MVC_GraphSage_100k_train_base.json"
     }

@@ -21,12 +21,14 @@ class load_CODataSetDGL(torch.utils.data.Dataset):
                  data_dir,
                  name,
                  split,
-                 features="basic"):
+                 features="basic",
+                 labels="all"):
 
         self.name = name
         self.split = split.lower()
         self.is_test = self.split == 'test'
         self.features = features
+        self.labels = labels
         with open(os.path.join(data_dir, name + '_%s.pkl' % self.split), 'rb') as f:
             self.dataset = pickle.load(f)
         self.node_labels = []
@@ -73,19 +75,29 @@ class load_CODataSetDGL(torch.utils.data.Dataset):
                         temp_labels.append(0)
                 converted_labels_list.append(temp_labels)
 
-            #if self.split == "test":
-            if self.split == "test" or self.split == "train" or self.split == "val":
-                self.graph_lists.append(g)
-                while len(converted_labels_list) < 100:
-                    zeros_list = [0 for _ in range(self.graph_size)]
-                    converted_labels_list.append(zeros_list)
-                self.node_labels.append(converted_labels_list)
-            else:
-                for labels in converted_labels_list:
+            if self.labels == "one":
+                if self.split == "test":
                     self.graph_lists.append(g)
-                    self.node_labels.append(labels)
-                    # comment out if you want to include all solutions
-                    # break
+                    while len(converted_labels_list) < 100:
+                        zeros_list = [0 for _ in range(self.graph_size)]
+                        converted_labels_list.append(zeros_list)
+                    self.node_labels.append(converted_labels_list)
+                else:
+                    for labels in converted_labels_list:
+                        self.graph_lists.append(g)
+                        self.node_labels.append(labels)
+                        break
+            else:
+                if self.split == "test" or self.split == "train" or self.split == "val":
+                    self.graph_lists.append(g)
+                    while len(converted_labels_list) < 100:
+                        zeros_list = [0 for _ in range(self.graph_size)]
+                        converted_labels_list.append(zeros_list)
+                    self.node_labels.append(converted_labels_list)
+                else:
+                    for labels in converted_labels_list:
+                        self.graph_lists.append(g)
+                        self.node_labels.append(labels)
 
         print("Average objective value:", sum(obj_values)/len(obj_values))
 
@@ -168,7 +180,7 @@ def positional_encoding(g, pos_enc_dim):
 
 class CODataset(torch.utils.data.Dataset):
 
-    def __init__(self, data_dir, name, split, features="degree"):
+    def __init__(self, data_dir, name, split, features="degree", labels="all"):
         """
         split is train or test
         """
@@ -178,12 +190,13 @@ class CODataset(torch.utils.data.Dataset):
         self.data_dir = data_dir
         self.split = split.lower()
         self.features = features.lower()
+        self.labels = labels.lower()
         if self.split == "train":
-            self.dataset = load_CODataSetDGL(data_dir, name, split='train', features=self.features)
+            self.dataset = load_CODataSetDGL(data_dir, name, split='train', features=self.features, labels=self.labels)
         if self.split == "val":
-            self.dataset = load_CODataSetDGL(data_dir, name, split='val', features=self.features)
+            self.dataset = load_CODataSetDGL(data_dir, name, split='val', features=self.features, labels=self.labels)
         if self.split == "test":
-            self.dataset = load_CODataSetDGL(data_dir, name, split='test', features=self.features)
+            self.dataset = load_CODataSetDGL(data_dir, name, split='test', features=self.features, labels=self.labels)
         print(f"[I] Finished loading {len(self.dataset)} graphs for {self.name} dataset with {self.features} features.")
         print("[I] Data load time: {:.4f}s".format(time.time() - start))
 

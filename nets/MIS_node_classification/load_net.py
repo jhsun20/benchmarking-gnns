@@ -3,15 +3,15 @@
     selected by the user
 """
 
-from nets.MVC_node_classification.gated_gcn_net import GatedGCNNet
-from nets.MVC_node_classification.gcn_net import GCNNet
-from nets.MVC_node_classification.gat_net import GATNet
-from nets.MVC_node_classification.graphsage_net import GraphSageNet
-from nets.MVC_node_classification.mlp_net import MLPNet
-from nets.MVC_node_classification.gin_net import GINNet
-from nets.MVC_node_classification.gmm_net import GMMNet
-from nets.MVC_node_classification.pna_net import PNANet
-from nets.MVC_node_classification.egt_net import EGTNet
+from nets.MIS_node_classification.gated_gcn_net import GatedGCNNet
+from nets.MIS_node_classification.gcn_net import GCNNet
+from nets.MIS_node_classification.gat_net import GATNet
+from nets.MIS_node_classification.graphsage_net import GraphSageNet
+from nets.MIS_node_classification.mlp_net import MLPNet
+from nets.MIS_node_classification.gin_net import GINNet
+from nets.MIS_node_classification.gmm_net import GMMNet
+from nets.MIS_node_classification.pna_net import PNANet
+from nets.MIS_node_classification.egt_net import EGTNet
 
 
 def GatedGCN(net_params):

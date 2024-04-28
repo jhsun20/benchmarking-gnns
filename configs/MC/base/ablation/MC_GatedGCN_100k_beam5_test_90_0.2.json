@@ -1,0 +1,16 @@
+{
+    "setup": {
+        "gpu": {
+            "use": true,
+            "id": 0
+        },
+        "model": "GatedGCN",
+        "train_dataset": "MC",
+        "test_dataset": "MC_90_0.2",
+        "out_dir": "out/MC_node_classification/",
+        "beam_width": 5,
+        "time_limit": 60,
+        "saved_weights": "saved_models/MC/base/GatedGCN/weights.pkl",
+        "saved_config" : "saved_models/MC/base/GatedGCN/MC_GatedGCN_100k_train_base.json"
+    }
+}

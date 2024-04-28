@@ -1,0 +1,16 @@
+{
+    "setup": {
+        "gpu": {
+            "use": true,
+            "id": 0
+        },
+        "model": "MLP",
+        "train_dataset": "MIS",
+        "test_dataset": "MIS_90_0.2",
+        "out_dir": "out/MIS_node_classification/",
+        "beam_width": 10,
+        "time_limit": 60,
+        "saved_weights": "saved_models/MIS/base/MLP/weights.pkl",
+        "saved_config" : "saved_models/MIS/base/MLP/MIS_MLP_train_base.json"
+    }
+}
