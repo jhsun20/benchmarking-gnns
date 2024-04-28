@@ -311,17 +311,11 @@ def main(args):
         trial_name_creator=lambda trial: f"{trial.trial_id}_{trial.config['setup']['model']}_{trial.config['setup']['train_dataset']}_{trial.config['tunable_net_params']['loss_weight'][1]:.3f}"
     )
     log_dir = f"{args.dataset}_{args.model}"
-    if os.path.exists(f"/home/xiongzhixiao/ray_results/{log_dir}"):
-        yes = input(f"The directory {log_dir} already exists, do you want to delete it? (y/[n])")
-        if yes == 'y':
-            os.system(f"rm -rf /home/xiongzhixiao/ray_results/{log_dir}")
-        elif yes == 'n' or yes == '':
-            pass
-        else:
-            print("Invalid input, exit...")
-            exit()
+    os.makedirs(f"/home/xiongzhixiao/ray_results/{log_dir}", exist_ok=True)
+    
     run_configer = RunConfig(
         name=log_dir,
+        storage_path=f"/home/xiongzhixiao/ray_results/{log_dir}",
         progress_reporter=reporter,
         stop={"time_total_s":7200},
         failure_config=FailureConfig(fail_fast=False),
@@ -365,43 +359,43 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     os.environ["CUDA_VISIBLE_DEVICES"] = args.device
+    os.environ["RAY_memory_usage_threshold"] = "0.98"
     main(args)
 
 # %%
-if __name__ == '__main__':
-    import matplotlib.pyplot as plt 
-    import itertools
-    import numpy as np
-    results_dir = Path("/home/xiongzhixiao/ray_results")  # todo
-    datasets = ["MIS", "MVC", "MC"]
-    models = ["EGT", "GAT", "GatedGCN", "GCN", "GIN", "GMM", "GraphSage"]
-    dir_names = [f"{dataset}_{model}" for dataset, model in itertools.product(datasets, models)]
-    for d in results_dir.iterdir():
-        if d.is_dir() and d.name in dir_names:
-            dataset, model = d.name.split("_")
-            train_func = {
-                "MC": train_MC,
-                "MVC": train_MVC,
-                "MIS": train_MIS
-            }[dataset]
-            restored_tuner = tune.Tuner.restore(str(d),trainable=train_func)
-            result_grid = restored_tuner.get_results()
-            best_config = result_gid.get_best_result(metric="val_f1", mode="max")
-            loss_weights = np.array([result.config['tunable_net_params']['loss_weight'][1] for result in result_grid])
-            val_f1s = np.array([result.metrics['val_f1'] for result in result_grid])
-            # sort loss_weights and val_f1s according to loss_weights in ascending order
-            idx = np.argsort(loss_weights)
-            loss_weights = loss_weights[idx]
-            val_f1s = val_f1s[idx]
-            plt.figure(figsize=(8, 6))
-            plt.scatter(loss_weights, val_f1s, marker='o', s=100, alpha=0.5)
-            plt.plot(loss_weights, val_f1s, label='raw curve', color='red',alpha=0.5)
-            plt.xlabel("loss weight (1:x)")
-            plt.ylabel("valation f1 score")
-            plt.title(f"Tuning results of {dataset} on {model}")
-            plt.legend()
-            # add other configs to the plot
-            plt.text(0.5, 0.95, f"best loss weight: {best_config.config['tunable_net_params']['loss_weight'][1]:.3f}", transform=plt.gca().transAxes, fontsize=10, verticalalignment='center')
-            plt.tight_layout()
-            plt.savefig(f"out/{dataset}_node_classification/{dataset}_{model}.png")
-# %%
+# if __name__ == '__main__':
+#     import matplotlib.pyplot as plt 
+#     import itertools
+#     import numpy as np
+#     results_dir = Path("/home/xiongzhixiao/ray_results")  # todo
+#     datasets = ["MIS", "MVC", "MC"]
+#     models = ["EGT", "GAT", "GatedGCN", "GCN", "GIN", "GMM", "GraphSage"]
+#     dir_names = [f"{dataset}_{model}" for dataset, model in itertools.product(datasets, models)]
+#     for d in results_dir.iterdir():
+#         if d.is_dir() and d.name in dir_names:
+#             dataset, model = d.name.split("_")
+#             train_func = {
+#                 "MC": train_MC,
+#                 "MVC": train_MVC,
+#                 "MIS": train_MIS
+#             }[dataset]
+#             restored_tuner = tune.Tuner.restore(str(d),trainable=train_func)
+#             result_grid = restored_tuner.get_results()
+#             best_config = result_grid.get_best_result(metric="val_f1", mode="max")
+#             loss_weights = np.array([result.config['tunable_net_params']['loss_weight'][1] for result in result_grid])
+#             val_f1s = np.array([result.metrics['val_f1'] for result in result_grid])
+#             # sort loss_weights and val_f1s according to loss_weights in ascending order
+#             idx = np.argsort(loss_weights)
+#             loss_weights = loss_weights[idx]
+#             val_f1s = val_f1s[idx]
+#             plt.figure(figsize=(8, 6))
+#             plt.scatter(loss_weights, val_f1s, marker='o', s=100, alpha=0.5)
+#             plt.plot(loss_weights, val_f1s, label='raw curve', color='red',alpha=0.5)
+#             plt.xlabel("loss weight (1:x)")
+#             plt.ylabel("valation f1 score")
+#             plt.title(f"Tuning results of {dataset} on {model}")
+#             plt.legend()
+#             # add other configs to the plot
+#             plt.text(0.5, 0.95, f"best loss weight: {best_config.config['tunable_net_params']['loss_weight'][1]:.3f}", transform=plt.gca().transAxes, fontsize=10, verticalalignment='center')
+#             plt.tight_layout()
+#             plt.savefig(f"out/{dataset}_node_classification/{dataset}_{model}.png")
